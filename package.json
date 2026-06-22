@@ -1,0 +1,21 @@
+{
+  "name": "gulnora-farm",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Gulnora Farm — Andijon viloyati boʻylab dorixonalar tarmogʻi rasmiy veb-sayti",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "pngjs": "^7.0.0",
+    "vite": "^5.4.11"
+  }
+}

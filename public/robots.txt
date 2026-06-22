@@ -1,0 +1,7 @@
+# Gulnora Farm — robots.txt
+# Barcha qidiruv tizimlariga to'liq ruxsat
+User-agent: *
+Allow: /
+
+# Sayt xaritasi
+Sitemap: https://gulnorafarm.uz/sitemap.xml

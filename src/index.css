@@ -1,0 +1,114 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: 'Hanken Grotesk', system-ui, sans-serif;
+  color: #26262a;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+input, textarea, button { font-family: inherit; }
+::placeholder { color: #a7a59f; }
+
+@keyframes gfFade {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gfSpin { to { transform: rotate(360deg); } }
+.gf-spin { animation: gfSpin .7s linear infinite; }
+
+/* Scroll reveal — only active once JS marks root ready, so content stays visible if JS fails */
+.gf-ready .gf-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .7s cubic-bezier(.16,.8,.3,1), transform .7s cubic-bezier(.16,.8,.3,1);
+}
+.gf-ready .gf-reveal.gf-in { opacity: 1; transform: none; }
+.gf-ready .gf-reveal.gf-d1 { transition-delay: .08s; }
+.gf-ready .gf-reveal.gf-d2 { transition-delay: .16s; }
+.gf-ready .gf-reveal.gf-d3 { transition-delay: .24s; }
+@media (prefers-reduced-motion: reduce) {
+  .gf-ready .gf-reveal { opacity: 1 !important; transform: none !important; transition: none; }
+}
+
+/* Branch card hover */
+.gf-branch-card { transition: box-shadow .25s, transform .25s, border-color .25s; }
+.gf-branch-card:hover {
+  box-shadow: 0 24px 48px -28px rgba(38,38,42,.5);
+  transform: translateY(-4px);
+  border-color: #d6d2cb;
+}
+
+/* Contact card hover */
+.gf-contact-card { transition: border-color .2s; }
+.gf-contact-card:hover { border-color: #26262a; }
+.gf-contact-card.tg:hover { border-color: #229ED9; }
+
+/* Inputs */
+.gf-input { transition: border-color .2s; }
+.gf-input:focus { border-color: #26262a; }
+
+/* Header mobile menu */
+.gf-burger {
+  display: none;
+  border: none;
+  cursor: pointer;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #f1efeb;
+  align-items: center;
+  justify-content: center;
+  color: #26262a;
+  flex: none;
+}
+.gf-mobile-menu { overflow: hidden; max-height: 0; transition: max-height .35s cubic-bezier(.16,.8,.3,1); }
+.gf-menu-open .gf-mobile-menu { max-height: 640px; }
+
+/* Responsive — desktop styles stay inline; these override at smaller widths */
+@media (max-width: 920px) {
+  .gf-hero { grid-template-columns: 1fr !important; gap: 34px !important; }
+  .gf-about { grid-template-columns: 1fr !important; gap: 38px !important; }
+  .gf-contact { grid-template-columns: 1fr !important; }
+  .gf-grid4 { grid-template-columns: repeat(2,1fr) !important; }
+  .gf-grid3 { grid-template-columns: repeat(2,1fr) !important; }
+  .gf-foot { grid-template-columns: 1fr 1fr !important; gap: 30px !important; }
+  .gf-nav { display: none !important; }
+  .gf-social-desk { display: none !important; }
+  .gf-burger { display: flex !important; }
+  .gf-callbtn-text { display: none !important; }
+  .gf-h1 { font-size: 40px !important; }
+  .gf-sectitle { font-size: 30px !important; }
+  .gf-vacicon { display: none !important; }
+  .gf-vac { grid-template-columns: 1fr !important; }
+  .gf-hero-img { height: 400px !important; }
+  .gf-about-img { height: 360px !important; }
+  .gf-toplogo { display: none !important; }
+}
+@media (max-width: 620px) {
+  .gf-grid4 { grid-template-columns: 1fr !important; }
+  .gf-grid3 { grid-template-columns: 1fr !important; }
+  .gf-foot { grid-template-columns: 1fr !important; }
+  .gf-heropad { padding: 38px 18px 50px !important; }
+  .gf-pad { padding: 52px 18px !important; }
+  .gf-h1 { font-size: 33px !important; }
+  .gf-herosub { font-size: 16px !important; }
+  .gf-stats { gap: 0 !important; justify-content: space-between; }
+  .gf-stat-div { display: none !important; }
+  .gf-headpad { padding: 0 16px !important; height: 64px !important; }
+  .gf-vac { padding: 30px 22px !important; }
+  .gf-hero-img { height: 300px !important; }
+  .gf-about-img { height: 280px !important; }
+  .gf-promo { font-size: 12px !important; padding: 8px 14px !important; }
+  .gf-floatbadge { left: 8px !important; }
+  .gf-heroctas > a { flex: 1 1 auto; justify-content: center; }
+}
+@media (max-width: 400px) {
+  .gf-h1 { font-size: 28px !important; }
+  .gf-stat-num { font-size: 24px !important; }
+  .gf-wordmark { font-size: 17px !important; }
+  .gf-langtoggle button { padding: 6px 9px !important; }
+}

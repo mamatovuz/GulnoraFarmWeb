@@ -1,0 +1,15 @@
+{
+  "name": "Gulnora Farm — dorixonalar tarmogʻi",
+  "short_name": "Gulnora Farm",
+  "description": "Andijon viloyati boʻylab 16 ta filialga ega ishonchli dorixonalar tarmogʻi.",
+  "lang": "uz",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f4f1",
+  "theme_color": "#26262a",
+  "icons": [
+    { "src": "/assets/favicon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/assets/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
