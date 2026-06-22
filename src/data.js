@@ -40,25 +40,8 @@ export const BRANCH_IMAGES = {
 export const HERO_IMAGE = ''   // masalan: '/photos/hero.jpg'
 export const ABOUT_IMAGE = ''  // masalan: '/photos/jamoa.jpg'
 
-/* =========================================================================
-   TELEGRAM — ARIZALAR (backendsiz)
-   -------------------------------------------------------------------------
-   Saytdagi "Savol qoldiring" formasi to'g'ridan-to'g'ri brauzerdan
-   Telegram Bot API orqali pastdagi kanalga xabar yuboradi.
-   Bot SHU kanalda ADMIN bo'lishi shart (aks holda xabar bormaydi).
-
-   🔐  Token va kanal ID kodda EMAS — ular  .env.local  faylida saqlanadi
-       (u .gitignore orqali GitHub'ga yuklanmaydi). Birinchi marta sozlash:
-         1) loyiha ildizida  .env.local  fayl yarating (.env.example dan nusxa)
-         2) qiymatlarni yozing:
-              VITE_TELEGRAM_BOT_TOKEN=...
-              VITE_TELEGRAM_CHAT_ID=-100...
-         3) npm run dev / npm run build qayta ishga tushiring
-   ⚠️  Backendsiz yechimda token build qilingan JS ichida baribir ko'rinadi.
-       Agar token oshkor bo'lib qolsa — @BotFather da /revoke qilib yangilang.
-   ========================================================================= */
-export const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || ''
-export const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || ''
+export const TELEGRAM_BOT_TOKEN = '8945102855:AAGv2xOLolpXc-sG3LqLve_4eaDZAiJrXVQ'
+export const TELEGRAM_CHAT_ID = '-1004415969795'
 
 // Formadagi arizani Telegram kanaliga yuboradi
 export async function sendLeadToTelegram({ name, phone, message, lang }) {
