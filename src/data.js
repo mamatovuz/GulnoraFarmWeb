@@ -174,6 +174,29 @@ export const TR = {
     formError: 'Yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib koʻring yoki telefon orqali bogʻlaning.',
     footTagline: 'Gulnora Farm — Andijon viloyati boʻylab ishonchli dorixonalar tarmogʻi.',
     footRights: 'Barcha huquqlar himoyalangan.', footMade: 'Sevgi bilan tayyorlangan',
+
+    // Filial qidiruv / xarita
+    regions: { all: 'Barchasi', andijon: 'Andijon shahri', asaka: 'Asaka', qurgontepa: 'Qoʻrgʻontepa', xojaobod: 'Xoʻjaobod', paytug: 'Paytugʻ' },
+    searchPlaceholder: 'Filial yoki manzil boʻyicha qidiring…',
+    nearMe: 'Menga eng yaqin',
+    nearMeLoading: 'Aniqlanmoqda…',
+    geoError: 'Joylashuvni aniqlab boʻlmadi. Brauzerda ruxsat bering.',
+    resultsCount: (n, total) => `${total} tadan ${n} ta filial`,
+    noResults: 'Hech narsa topilmadi. Boshqacha qidiring.',
+    clearSearch: 'Tozalash',
+    mapTitle: 'Barcha filiallar xaritada',
+    openNow: 'Hozir ochiq', closedNow: 'Yopiq', open24: '24 soat', opensAtLabel: 'da ochiladi',
+    away: 'uzoqlikda',
+
+    // Mijozlar fikri
+    reviewsEyebrow: 'Mijozlar fikri', reviewsTitle: 'Mijozlarimiz nima deydi',
+    reviews: [
+      { name: 'Dilnoza R.', city: 'Andijon', rating: 5, text: 'Har doim kerakli dorini shu yerdan topaman. Farmatsevtlar juda xushmuomala va bilimli. Rahmat, Gulnora Farm!' },
+      { name: 'Aziz M.', city: 'Asaka', rating: 5, text: 'Narxlari qulay, mahsulotlar original. Uyimga eng yaqin filial boʻlgani uchun doim shu yerdan olaman.' },
+      { name: 'Sevara T.', city: 'Andijon', rating: 5, text: 'Telegram bot orqali dori borligini tekshirib, borib oldim. Juda qulay xizmat, vaqtni tejadim.' },
+      { name: 'Jasur K.', city: 'Xoʻjaobod', rating: 5, text: 'Tunda ham ochiq filiali borligi juda yordam berdi. Bolam kasal boʻlganda qutqardi.' }
+    ],
+
     branches: uzBranches
   },
   ru: {
@@ -216,8 +239,39 @@ export const TR = {
     formError: 'Ошибка при отправке. Попробуйте ещё раз или свяжитесь по телефону.',
     footTagline: 'Gulnora Farm — надёжная сеть аптек в Андижанской области.',
     footRights: 'Все права защищены.', footMade: 'Сделано с любовью',
+
+    // Поиск филиалов / карта
+    regions: { all: 'Все', andijon: 'Андижан', asaka: 'Асака', qurgontepa: 'Кургантепа', xojaobod: 'Ходжаабад', paytug: 'Пайтуг' },
+    searchPlaceholder: 'Поиск по филиалу или адресу…',
+    nearMe: 'Ближайший ко мне',
+    nearMeLoading: 'Определяем…',
+    geoError: 'Не удалось определить местоположение. Разрешите доступ в браузере.',
+    resultsCount: (n, total) => `${n} из ${total} филиалов`,
+    noResults: 'Ничего не найдено. Попробуйте иначе.',
+    clearSearch: 'Очистить',
+    mapTitle: 'Все филиалы на карте',
+    openNow: 'Открыто', closedNow: 'Закрыто', open24: '24 часа', opensAtLabel: 'откроется в',
+    away: 'от вас',
+
+    // Отзывы
+    reviewsEyebrow: 'Отзывы', reviewsTitle: 'Что говорят наши клиенты',
+    reviews: [
+      { name: 'Дилноза Р.', city: 'Андижан', rating: 5, text: 'Всегда нахожу здесь нужное лекарство. Фармацевты очень вежливые и знающие. Спасибо, Gulnora Farm!' },
+      { name: 'Азиз М.', city: 'Асака', rating: 5, text: 'Цены доступные, товары оригинальные. Беру всегда здесь — ближайший филиал к дому.' },
+      { name: 'Севара Т.', city: 'Андижан', rating: 5, text: 'Проверила наличие через Telegram-бот и забрала. Очень удобно, сэкономила время.' },
+      { name: 'Жасур К.', city: 'Ходжаабад', rating: 5, text: 'Круглосуточный филиал очень выручил, когда ночью заболел ребёнок.' }
+    ],
+
     branches: ruBranches
   }
+}
+
+// Filial hududi (qidiruv chiplari uchun). Nomlar TR.*.regions da tarjima qilinadi.
+export const BRANCH_REGION = {
+  br1: 'andijon', br2: 'andijon', br3: 'andijon', br4: 'andijon', br5: 'andijon',
+  br6: 'andijon', br7: 'andijon', br8: 'andijon', br9: 'paytug', br10: 'andijon',
+  br11: 'andijon', br12: 'andijon', br13: 'andijon', br14: 'asaka',
+  br15: 'qurgontepa', br16: 'xojaobod'
 }
 
 export function withBranchUrls(branches) {
@@ -228,8 +282,44 @@ export function withBranchUrls(branches) {
       ...b,
       mapUrl,
       routeUrl,
+      lat: parseFloat(b.lat),
+      lon: parseFloat(b.lon),
+      region: BRANCH_REGION[b.id] || 'andijon',
       tel: (b.phone || '').replace(/[^\d+]/g, ''),
       img: BRANCH_IMAGES[b.id] || '' // filial fotosi (yuqoridagi BRANCH_IMAGES dan)
     }
   })
+}
+
+// ── Yordamchi funksiyalar ─────────────────────────────────────────────────
+
+// Ikki nuqta orasidagi masofa (km) — Haversine formulasi
+export function distanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+export function formatDistance(km) {
+  if (km == null) return ''
+  return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km'
+}
+
+// "08:00 – 24:00" kabi ish vaqtidan hozir ochiq/yopiqligini aniqlaydi
+export function branchOpenStatus(hours, now = new Date()) {
+  const m = (hours || '').match(/(\d{1,2}):(\d{2})\D+(\d{1,2}):(\d{2})/)
+  if (!m) return { open: true, open24: false }
+  let start = +m[1] * 60 + +m[2]
+  let end = +m[3] * 60 + +m[4]
+  const open24 = start === 0 && (end === 1440 || end === 0)
+  const cur = now.getHours() * 60 + now.getMinutes()
+  if (end <= start) end += 1440 // yarim tundan oshsa
+  let c = cur
+  const open = (c >= start && c < end) || (c + 1440 >= start && c + 1440 < end)
+  const opensAt = m[1].padStart(2, '0') + ':' + m[2]
+  return { open, open24, opensAt }
 }

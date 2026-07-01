@@ -1,7 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { TR, withBranchUrls, sendLeadToTelegram, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { TR, withBranchUrls, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
 import Logo from './components/Logo.jsx'
 import ImageSlot from './components/ImageSlot.jsx'
+import BranchMap from './components/BranchMap.jsx'
+import CountUp from './components/CountUp.jsx'
+import Testimonials from './components/Testimonials.jsx'
+import FloatingUI from './components/FloatingUI.jsx'
 import {
   Pin, Phone, Telegram, Instagram, Shield, Check, Gear, Users,
   Pill, Heart, Activity, Chat, Clock, Info, Navigate, Menu, Close
@@ -68,9 +72,11 @@ export default function App() {
       <About t={t} />
       <Services t={t} />
       <Branches t={t} branches={branches} />
+      <Testimonials t={t} />
       <Vacancy t={t} />
       <Contact t={t} lang={lang} />
       <Footer t={t} />
+      <FloatingUI />
     </div>
   )
 }
@@ -197,7 +203,7 @@ function Hero({ t }) {
 function Stat({ num, label }) {
   return (
     <div>
-      <div className="gf-stat-num" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 30, color: '#212126' }}>{num}</div>
+      <CountUp value={num} className="gf-stat-num" style={{ display: 'block', fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 30, color: '#212126' }} />
       <div style={{ fontSize: 13.5, color: '#6f6e69', marginTop: 2 }}>{label}</div>
     </div>
   )
@@ -289,35 +295,158 @@ function Services({ t }) {
 
 /* ---------- BRANCHES ---------- */
 function Branches({ t, branches }) {
+  const [query, setQuery] = useState('')
+  const [region, setRegion] = useState('all')
+  const [userLoc, setUserLoc] = useState(null)
+  const [activeId, setActiveId] = useState(null)
+  const [geoState, setGeoState] = useState('idle') // idle | loading | error
+  const mapWrapRef = useRef(null)
+
+  // Hududlar (chiplar) — filiallar tartibida noyob
+  const regionKeys = useMemo(() => {
+    const seen = []
+    branches.forEach(b => { if (!seen.includes(b.region)) seen.push(b.region) })
+    return ['all', ...seen]
+  }, [branches])
+
+  // Filtrlash + holat + masofa
+  const list = useMemo(() => {
+    const now = new Date()
+    const q = query.trim().toLowerCase()
+    let arr = branches
+      .filter(b => region === 'all' || b.region === region)
+      .filter(b => !q || [b.name, b.addr, b.near].filter(Boolean).some(s => s.toLowerCase().includes(q)))
+      .map(b => {
+        const status = branchOpenStatus(b.hours, now)
+        let dist = null, distLabel = ''
+        if (userLoc) { dist = distanceKm(userLoc.lat, userLoc.lon, b.lat, b.lon); distLabel = formatDistance(dist) }
+        return { ...b, __status: status, __dist: dist, __distLabel: distLabel }
+      })
+    if (userLoc) arr = arr.sort((a, b) => a.__dist - b.__dist)
+    return arr
+  }, [branches, query, region, userLoc])
+
+  const findNearest = () => {
+    if (!navigator.geolocation) { setGeoState('error'); return }
+    setGeoState('loading')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const loc = { lat: pos.coords.latitude, lon: pos.coords.longitude }
+        setUserLoc(loc)
+        setGeoState('idle')
+        // eng yaqin filialga fokus
+        const nearest = branches.reduce((best, b) => {
+          const d = distanceKm(loc.lat, loc.lon, b.lat, b.lon)
+          return !best || d < best.d ? { id: b.id, d } : best
+        }, null)
+        if (nearest) setActiveId(nearest.id)
+        mapWrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      },
+      () => setGeoState('error'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  const focusBranch = (id) => {
+    setActiveId(id)
+    mapWrapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   return (
     <section id="branches" style={{ background: '#f5f4f1' }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
-        <div className="gf-reveal" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', marginBottom: 38 }}>
+        <div className="gf-reveal" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', marginBottom: 26 }}>
           <div>
             <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: ACCENT }}>{t.navBranches}</div>
             <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#212126' }}>{t.branchTitle}</h2>
           </div>
           <p style={{ fontSize: 16, color: '#6f6e69', maxWidth: 360 }}>{t.branchSub}</p>
         </div>
-        <div className="gf-grid3 gf-reveal gf-d1" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
-          {branches.map(b => <BranchCard key={b.id} b={b} t={t} />)}
+
+        {/* Qidiruv + eng yaqin */}
+        <div className="gf-reveal" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
+          <div style={{ position: 'relative', flex: '1 1 320px' }}>
+            <span style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#9a9892', pointerEvents: 'none' }}>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            </span>
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder={t.searchPlaceholder} className="gf-input"
+              style={{ width: '100%', border: '1px solid #ded9d2', background: '#fff', borderRadius: 13, padding: '14px 15px 14px 44px', fontSize: 15, color: '#26262a', outline: 'none' }} />
+            {query && (
+              <button onClick={() => setQuery('')} aria-label={t.clearSearch}
+                style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: '#f1efeb', cursor: 'pointer', width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6f6e69' }}>
+                <Close size={16} />
+              </button>
+            )}
+          </div>
+          <button onClick={findNearest} disabled={geoState === 'loading'}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: ACCENT, color: '#fff', border: 'none', cursor: geoState === 'loading' ? 'wait' : 'pointer', fontWeight: 600, fontSize: 15, padding: '14px 20px', borderRadius: 13, flex: 'none' }}>
+            {geoState === 'loading'
+              ? <span className="gf-spin" style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.4)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block' }} />
+              : <Pin size={17} />}
+            {geoState === 'loading' ? t.nearMeLoading : t.nearMe}
+          </button>
         </div>
+
+        {/* Hudud chiplari */}
+        <div className="gf-reveal" style={{ display: 'flex', gap: 9, flexWrap: 'wrap', marginBottom: 18 }}>
+          {regionKeys.map(rk => {
+            const active = region === rk
+            return (
+              <button key={rk} onClick={() => setRegion(rk)}
+                style={{ border: '1px solid ' + (active ? '#26262a' : '#ded9d2'), background: active ? '#26262a' : '#fff', color: active ? '#fff' : '#54534f', cursor: 'pointer', fontSize: 13.5, fontWeight: 600, padding: '8px 15px', borderRadius: 999, transition: 'all .15s' }}>
+                {t.regions[rk] || rk}
+              </button>
+            )
+          })}
+          <span style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 13.5, color: '#8a8983' }}>
+            {geoState === 'error' ? <span style={{ color: '#c0473c' }}>{t.geoError}</span> : t.resultsCount(list.length, branches.length)}
+          </span>
+        </div>
+
+        {/* Xarita */}
+        <div ref={mapWrapRef} className="gf-reveal" style={{ marginBottom: 26 }}>
+          <BranchMap branches={list} activeId={activeId} userLoc={userLoc} t={t} />
+        </div>
+
+        {/* Kartochkalar */}
+        {list.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8a8983', fontSize: 16 }}>{t.noResults}</div>
+        ) : (
+          <div className="gf-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
+            {list.map(b => <BranchCard key={b.id} b={b} t={t} active={b.id === activeId} onFocus={() => focusBranch(b.id)} />)}
+          </div>
+        )}
       </div>
     </section>
   )
 }
-function BranchCard({ b, t }) {
+function OpenBadge({ status, t, dark }) {
+  const open = status?.open
+  const label = status?.open24 ? t.open24 : open ? t.openNow : t.closedNow
+  const color = open ? '#3f7a52' : '#c0473c'
+  const bg = dark ? 'rgba(0,0,0,.4)' : (open ? '#eef4ef' : '#fbeceb')
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: bg, color: dark ? '#fff' : color, fontSize: 12, fontWeight: 600, padding: '5px 10px', borderRadius: 999, backdropFilter: dark ? 'blur(4px)' : 'none', WebkitBackdropFilter: dark ? 'blur(4px)' : 'none' }}>
+      <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, display: 'inline-block' }} />
+      {label}{!open && !status?.open24 && status?.opensAt ? ` · ${status.opensAt} ${t.opensAtLabel}` : ''}
+    </span>
+  )
+}
+function BranchCard({ b, t, active, onFocus }) {
   const stop = (e) => e.stopPropagation()
   return (
-    <div className="gf-branch-card" style={{ display: 'flex', flexDirection: 'column', background: '#fff', border: '1px solid #ebe8e3', borderRadius: 18, overflow: 'hidden' }}>
-      <a href={b.mapUrl} target="_blank" rel="noopener" title={t.onMap} style={{ position: 'relative', display: 'block' }}>
+    <div className="gf-branch-card" style={{ display: 'flex', flexDirection: 'column', background: '#fff', border: '1px solid ' + (active ? '#3f7a52' : '#ebe8e3'), borderRadius: 18, overflow: 'hidden', boxShadow: active ? '0 20px 44px -24px rgba(63,122,82,.6)' : 'none' }}>
+      <button onClick={onFocus} title={t.onMap} style={{ position: 'relative', display: 'block', border: 'none', padding: 0, cursor: 'pointer', background: 'transparent', width: '100%' }}>
         <ImageSlot src={b.img} alt={b.name} placeholder="Filial fotosi" style={{ height: 158 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(20,20,22,.5),rgba(20,20,22,0) 55%)', pointerEvents: 'none' }} />
-        {b.tag ? <span style={{ position: 'absolute', top: 12, left: 12, background: '#26262a', color: '#fff', fontSize: 12, fontWeight: 600, padding: '5px 11px', borderRadius: 999 }}>{b.tag}</span> : null}
+        <span style={{ position: 'absolute', top: 12, left: 12 }}><OpenBadge status={b.__status} t={t} dark /></span>
+        {b.__dist != null && (
+          <span style={{ position: 'absolute', top: 12, right: 12, background: '#3f7a52', color: '#fff', fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 999 }}>{b.__distLabel} {t.away}</span>
+        )}
         <div style={{ position: 'absolute', bottom: 11, left: 12, display: 'flex', alignItems: 'center', gap: 6, color: '#fff', fontSize: 12.5, fontWeight: 600, background: 'rgba(0,0,0,.32)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', padding: '5px 10px', borderRadius: 999 }}>
           <Pin size={13} />{t.onMap}
         </div>
-      </a>
+      </button>
       <div style={{ padding: '17px 18px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, color: '#26262a' }}>{b.name}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12, flex: 1 }}>
