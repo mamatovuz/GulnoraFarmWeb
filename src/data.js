@@ -18,22 +18,22 @@ export const INSTAGRAM = 'https://www.instagram.com/gulnorafarm.uz'
    Rasm yo'li har doim '/photos/...' bilan boshlanadi.
    ========================================================================= */
 export const BRANCH_IMAGES = {
-  br1: 'public/photos/ghrasim.png',   // Gorgaz filiali
-  br2: 'public/photos/ghrasim.png',   // Eski shahar №1 filiali
-  br3: 'public/photos/ghrasim.png',   // Soy filiali
-  br4: 'public/photos/ghrasim.png',   // Yangi bozor filiali
-  br5: 'public/photos/ghrasim.png',   // Jalabek filiali
-  br6: 'public/photos/ghrasim.png',   // Soy №2 filiali
-  br7: 'public/photos/ghrasim.png',   // Sanchas filiali
-  br8: 'public/photos/ghrasim.png',   // Yangi bozor filiali №2
-  br9: 'public/photos/ghrasim.png',   // Paytugʻ filiali
-  br10: 'public/photos/ghrasim.png',  // Semashka filiali
-  br11: 'public/photos/ghrasim.png',  // Boston filiali
-  br12: 'public/photos/ghrasim.png',  // Kanechka filiali
-  br13: 'public/photos/ghrasim.png',  // Old Sitiy filiali
-  br14: 'public/photos/ghrasim.png',  // Asaka filiali
-  br15: 'public/photos/ghrasim.png',  // Qoʻrgʻontepa filiali
-  br16: 'public/photos/ghrasim.png'   // Xoʻjaobod filiali
+  br1: 'public/photos/ghrasim.jpg',   // Gorgaz filiali
+  br2: 'public/photos/ghrasim.jpg',   // Eski shahar №1 filiali
+  br3: 'public/photos/ghrasim.jpg',   // Soy filiali
+  br4: 'public/photos/ghrasim.jpg',   // Yangi bozor filiali
+  br5: 'public/photos/ghrasim.jpg',   // Jalabek filiali
+  br6: 'public/photos/ghrasim.jpg',   // Soy №2 filiali
+  br7: 'public/photos/ghrasim.jpg',   // Sanchas filiali
+  br8: 'public/photos/ghrasim.jpg',   // Yangi bozor filiali №2
+  br9: 'public/photos/ghrasim.jpg',   // Paytugʻ filiali
+  br10: 'public/photos/ghrasim.jpg',  // Semashka filiali
+  br11: 'public/photos/ghrasim.jpg',  // Boston filiali
+  br12: 'public/photos/ghrasim.jpg',  // Kanechka filiali
+  br13: 'public/photos/ghrasim.jpg',  // Old Sitiy filiali
+  br14: 'public/photos/ghrasim.jpg',  // Asaka filiali
+  br15: 'public/photos/ghrasim.jpg',  // Qoʻrgʻontepa filiali
+  br16: 'public/photos/ghrasim.jpg'   // Xoʻjaobod filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
