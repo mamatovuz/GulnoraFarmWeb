@@ -18,27 +18,27 @@ export const INSTAGRAM = 'https://www.instagram.com/gulnorafarm.uz'
    Rasm yo'li har doim '/photos/...' bilan boshlanadi.
    ========================================================================= */
 export const BRANCH_IMAGES = {
-  br1: '',   // Gorgaz filiali
-  br2: '',   // Eski shahar №1 filiali
-  br3: '',   // Soy filiali
-  br4: '',   // Yangi bozor filiali
-  br5: '',   // Jalabek filiali
-  br6: '',   // Soy №2 filiali
-  br7: '',   // Sanchas filiali
-  br8: '',   // Yangi bozor filiali №2
-  br9: '',   // Paytugʻ filiali
-  br10: '',  // Semashka filiali
-  br11: '',  // Boston filiali
-  br12: '',  // Kanechka filiali
-  br13: '',  // Old Sitiy filiali
-  br14: '',  // Asaka filiali
-  br15: '',  // Qoʻrgʻontepa filiali
-  br16: ''   // Xoʻjaobod filiali
+  br1: 'public/photos/ghrasim.png',   // Gorgaz filiali
+  br2: 'public/photos/ghrasim.png',   // Eski shahar №1 filiali
+  br3: 'public/photos/ghrasim.png',   // Soy filiali
+  br4: 'public/photos/ghrasim.png',   // Yangi bozor filiali
+  br5: 'public/photos/ghrasim.png',   // Jalabek filiali
+  br6: 'public/photos/ghrasim.png',   // Soy №2 filiali
+  br7: 'public/photos/ghrasim.png',   // Sanchas filiali
+  br8: 'public/photos/ghrasim.png',   // Yangi bozor filiali №2
+  br9: 'public/photos/ghrasim.png',   // Paytugʻ filiali
+  br10: 'public/photos/ghrasim.png',  // Semashka filiali
+  br11: 'public/photos/ghrasim.png',  // Boston filiali
+  br12: 'public/photos/ghrasim.png',  // Kanechka filiali
+  br13: 'public/photos/ghrasim.png',  // Old Sitiy filiali
+  br14: 'public/photos/ghrasim.png',  // Asaka filiali
+  br15: 'public/photos/ghrasim.png',  // Qoʻrgʻontepa filiali
+  br16: 'public/photos/ghrasim.png'   // Xoʻjaobod filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
-export const HERO_IMAGE = ''   // masalan: '/photos/hero.jpg'
-export const ABOUT_IMAGE = ''  // masalan: '/photos/jamoa.jpg'
+export const HERO_IMAGE = '/photos/gulnorafarmrasim.jpg'   // masalan: '/photos/hero.jpg'
+export const ABOUT_IMAGE = '/photos/gf.jpg'  // masalan: '/photos/jamoa.jpg'
 
 export const TELEGRAM_BOT_TOKEN = '8945102855:AAGv2xOLolpXc-sG3LqLve_4eaDZAiJrXVQ'
 export const TELEGRAM_CHAT_ID = '-1004415969795'
