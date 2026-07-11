@@ -18,22 +18,22 @@ export const INSTAGRAM = 'https://www.instagram.com/gulnorafarm.uz'
    Rasm yo'li har doim '/photos/...' bilan boshlanadi.
    ========================================================================= */
 export const BRANCH_IMAGES = {
-  br1: 'public/photos/ghrasim.png',   // Gorgaz filiali
-  br2: 'public/photos/ghrasim.png',   // Eski shahar №1 filiali
-  br3: 'public/photos/ghrasim.png',   // Soy filiali
-  br4: 'public/photos/ghrasim.png',   // Yangi bozor filiali
-  br5: 'public/photos/ghrasim.png',   // Jalabek filiali
-  br6: 'public/photos/ghrasim.png',   // Soy №2 filiali
-  br7: 'public/photos/ghrasim.png',   // Sanchas filiali
-  br8: 'public/photos/ghrasim.png',   // Yangi bozor filiali №2
-  br9: 'public/photos/ghrasim.png',   // Paytugʻ filiali
-  br10: 'public/photos/ghrasim.png',  // Semashka filiali
-  br11: 'public/photos/ghrasim.png',  // Boston filiali
-  br12: 'public/photos/ghrasim.png',  // Kanechka filiali
-  br13: 'public/photos/ghrasim.png',  // Old Sitiy filiali
-  br14: 'public/photos/ghrasim.png',  // Asaka filiali
-  br15: 'public/photos/ghrasim.png',  // Qoʻrgʻontepa filiali
-  br16: 'public/photos/ghrasim.png'   // Xoʻjaobod filiali
+  br1: 'src/photos/ghrasim.png',   // Gorgaz filiali
+  br2: 'src/photos/ghrasim.png',   // Eski shahar №1 filiali
+  br3: 'src/photos/ghrasim.png',   // Soy filiali
+  br4: 'src/photos/ghrasim.png',   // Yangi bozor filiali
+  br5: 'src/photos/ghrasim.png',   // Jalabek filiali
+  br6: 'src/photos/ghrasim.png',   // Soy №2 filiali
+  br7: 'src/photos/ghrasim.png',   // Sanchas filiali
+  br8: 'src/photos/ghrasim.png',   // Yangi bozor filiali №2
+  br9: 'src/photos/ghrasim.png',   // Paytugʻ filiali
+  br10: 'src/photos/ghrasim.png',  // Semashka filiali
+  br11: 'src/photos/ghrasim.png',  // Boston filiali
+  br12: 'src/photos/ghrasim.png',  // Kanechka filiali
+  br13: 'src/photos/ghrasim.png',  // Old Sitiy filiali
+  br14: 'src/photos/ghrasim.png',  // Asaka filiali
+  br15: 'src/photos/ghrasim.png',  // Qoʻrgʻontepa filiali
+  br16: 'src/photos/ghrasim.png'   // Xoʻjaobod filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
