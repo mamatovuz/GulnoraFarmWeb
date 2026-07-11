@@ -18,22 +18,22 @@ export const INSTAGRAM = 'https://www.instagram.com/gulnorafarm.uz'
    Rasm yo'li har doim '/photos/...' bilan boshlanadi.
    ========================================================================= */
 export const BRANCH_IMAGES = {
-  br1: 'public/assets/ghrasim.jpg',   // Gorgaz filiali
-  br2: 'public/assets/ghrasim.jpg',   // Eski shahar №1 filiali
-  br3: 'public/assets/ghrasim.jpg',   // Soy filiali
-  br4: 'public/assets/ghrasim.jpg',   // Yangi bozor filiali
-  br5: 'public/assets/ghrasim.jpg',   // Jalabek filiali
-  br6: 'public/assets/ghrasim.jpg',   // Soy №2 filiali
-  br7: 'public/assets/ghrasim.jpg',   // Sanchas filiali
-  br8: 'public/assets/ghrasim.jpg',   // Yangi bozor filiali №2
-  br9: 'public/assets/ghrasim.jpg',   // Paytugʻ filiali
-  br10: 'public/assets/ghrasim.jpg',  // Semashka filiali
-  br11: 'public/assets/ghrasim.jpg',  // Boston filiali
-  br12: 'public/assets/ghrasim.jpg',  // Kanechka filiali
-  br13: 'public/assets/ghrasim.jpg',  // Old Sitiy filiali
-  br14: 'public/assets/ghrasim.jpg',  // Asaka filiali
-  br15: 'public/assets/ghrasim.jpg',  // Qoʻrgʻontepa filiali
-  br16: 'public/assets/ghrasim.jpg'   // Xoʻjaobod filiali
+  br1: '/assets/ghrasim.jpg',   // Gorgaz filiali
+  br2: '/assets/ghrasim.jpg',   // Eski shahar №1 filiali
+  br3: '/assets/ghrasim.jpg',   // Soy filiali
+  br4: '/assets/ghrasim.jpg',   // Yangi bozor filiali
+  br5: '/assets/ghrasim.jpg',   // Jalabek filiali
+  br6: '/assets/ghrasim.jpg',   // Soy №2 filiali
+  br7: '/assets/ghrasim.jpg',   // Sanchas filiali
+  br8: '/assets/ghrasim.jpg',   // Yangi bozor filiali №2
+  br9: '/assets/ghrasim.jpg',   // Paytugʻ filiali
+  br10: '/assets/ghrasim.jpg',  // Semashka filiali
+  br11: '/assets/ghrasim.jpg',  // Boston filiali
+  br12: '/assets/ghrasim.jpg',  // Kanechka filiali
+  br13: '/assets/ghrasim.jpg',  // Old Sitiy filiali
+  br14: '/assets/ghrasim.jpg',  // Asaka filiali
+  br15: '/assets/ghrasim.jpg',  // Qoʻrgʻontepa filiali
+  br16: '/assets/ghrasim.jpg'   // Xoʻjaobod filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
