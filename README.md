@@ -5,7 +5,7 @@ Andijon viloyati boʻylab **16 ta filialga** ega dorixonalar tarmogʻi — *Guln
 ## Imkoniyatlar
 
 - 🌐 **Ikki til** — Oʻzbekcha (UZ) va Ruscha (RU), bir tugma bilan almashtiriladi
-- 🏥 **16 ta filial** — har biri manzil, moʻljal, ish vaqti va telefon bilan; Google Maps xaritasi va yoʻl koʻrsatish havolalari
+- 🏥 **19 ta filial** — har biri manzil, moʻljal, ish vaqti va telefon bilan; Google Maps xaritasi va yoʻl koʻrsatish havolalari
 - 📱 **Toʻliq moslashuvchan (responsive)** dizayn + mobil menyu
 - ✨ Scroll-reveal animatsiyalari
 - 📞 Aloqa formasi, Telegram bot va Instagram havolalari
@@ -47,7 +47,7 @@ npm run preview  # build qilingan saytni koʻrish
 ```
 src/
   App.jsx              — barcha boʻlimlar (Header, Hero, Filiallar, Vakansiya, Aloqa, Footer)
-  data.js              — UZ/RU matnlar va 16 filial maʼlumotlari
+  data.js              — UZ/RU matnlar va 19 filial maʼlumotlari
   index.css            — global uslublar, responsive, animatsiyalar
   components/
     Logo.jsx           — Gulnora Farm belgisi (vektor)
