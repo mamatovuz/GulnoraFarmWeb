@@ -1,6 +1,6 @@
 # Gulnora Farm — veb-sayt
 
-Andijon viloyati boʻylab **19 ta filialga** ega dorixonalar tarmogʻi — *Gulnora Farm* uchun rasmiy bir sahifali (landing) veb-sayt. React + Vite asosida qurilgan.
+Andijon viloyati boʻylab **19f ta filialga** ega dorixonalar tarmogʻi — *Gulnora Farm* uchun rasmiy bir sahifali (landing) veb-sayt. React + Vite asosida qurilgan.
 
 ## Imkoniyatlar
 
