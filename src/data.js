@@ -118,7 +118,7 @@ const ruBranches = [
 
 export const TR = {
   uz: {
-    promo: 'Andijon viloyati boʻylab 16 ta filial — sizga eng yaqin Gulnora Farm',
+    promo: 'Andijon viloyati boʻylab 19 ta filial — sizga eng yaqin Gulnora Farm',
     navAbout: 'Biz haqimizda', navServices: 'Yoʻnalishlar', navBranches: 'Filiallar', navVacancy: 'Vakansiya', navContact: 'Aloqa', navMenu: 'Menyu',
     call: 'Qoʻngʻiroq',
     heroEyebrow: 'Dorixonalar tarmogʻi',
