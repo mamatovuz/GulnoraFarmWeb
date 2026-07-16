@@ -175,7 +175,7 @@ function Hero({ t }) {
           <div className="gf-stats" style={{ display: 'flex', gap: 34, marginTop: 42 }}>
             <Stat num="5+" label={t.statYears} />
             <div className="gf-stat-div" style={{ width: 1, background: '#e1ddd7' }} />
-            <Stat num="16" label={t.statBranches} />
+            <Stat num="19" label={t.statBranches} />
             <div className="gf-stat-div" style={{ width: 1, background: '#e1ddd7' }} />
             <Stat num="20K+" label={t.statClients} />
           </div>
