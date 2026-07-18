@@ -18,22 +18,22 @@ export const INSTAGRAM = 'https://www.instagram.com/gulnorafarm.uz'
    Rasm yo'li har doim '/photos/...' bilan boshlanadi.
    ========================================================================= */
 export const BRANCH_IMAGES = {
-  br1: '/assets/ghrasim.jpg',   // Gorgaz filiali
-  br2: '/assets/ghrasim.jpg',   // Eski shahar №1 filiali
-  br3: '/assets/ghrasim.jpg',   // Soy filiali
-  br4: '/assets/ghrasim.jpg',   // Yangi bozor filiali
-  br5: '/assets/ghrasim.jpg',   // Jalabek filiali
-  br6: '/assets/ghrasim.jpg',   // Soy №2 filiali
-  br7: '/assets/ghrasim.jpg',   // Sanchas filiali
-  br8: '/assets/ghrasim.jpg',   // Yangi bozor filiali №2
-  br9: '/assets/ghrasim.jpg',   // Paytugʻ filiali
-  br10: '/assets/ghrasim.jpg',  // Semashka filiali
-  br11: '/assets/ghrasim.jpg',  // Boston filiali
-  br12: '/assets/ghrasim.jpg',  // Kanechka filiali
-  br13: '/assets/ghrasim.jpg',  // Old Sitiy filiali
-  br14: '/assets/ghrasim.jpg',  // Asaka filiali
-  br15: '/assets/ghrasim.jpg',  // Qoʻrgʻontepa filiali
-  br16: '/assets/ghrasim.jpg'   // Xoʻjaobod filiali
+  br1: '/assets/g.jpg',   // Gorgaz filiali
+  br2: '/assets/g.jpg',   // Eski shahar №1 filiali
+  br3: '/assets/g.jpg',   // Soy filiali
+  br4: '/assets/g.jpg',   // Yangi bozor filiali
+  br5: '/assets/g.jpg',   // Jalabek filiali
+  br6: '/assets/g.jpg',   // Soy №2 filiali
+  br7: '/assets/g.jpg',   // Sanchas filiali
+  br8: '/assets/g.jpg',   // Yangi bozor filiali №2
+  br9: '/assets/g.jpg',   // Paytugʻ filiali
+  br10: '/assets/g.jpg',  // Semashka filiali
+  br11: '/assets/g.jpg',  // Boston filiali
+  br12: '/assets/g.jpg',  // Kanechka filiali
+  br13: '/assets/g.jpg',  // Old Sitiy filiali
+  br14: '/assets/g.jpg',  // Asaka filiali
+  br15: '/assets/g.jpg',  // Qoʻrgʻontepa filiali
+  br16: '/assets/g.jpg'   // Xoʻjaobod filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
