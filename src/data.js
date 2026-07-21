@@ -37,7 +37,7 @@ export const BRANCH_IMAGES = {
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
-export const HERO_IMAGE = '/photos/1.png'   // masalan: '/photos/hero.jpg'
+export const HERO_IMAGE = '/photos/gf.jpg'   // masalan: '/photos/hero.jpg'
 export const ABOUT_IMAGE = '/photos/image.png'  // masalan: '/photos/jamoa.jpg'
 
 export const TELEGRAM_BOT_TOKEN = '8945102855:AAGv2xOLolpXc-sG3LqLve_4eaDZAiJrXVQ'
