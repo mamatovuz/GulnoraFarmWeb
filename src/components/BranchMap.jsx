@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css'
 
 // Brend kulrangidagi maxsus pin (faol pin to'qroq va kattaroq)
 function pinIcon(active) {
-  const c = active ? '#2b2b2b' : '#767676'
+  const c = active ? '#262626' : '#767676'
   const size = active ? 42 : 34
   return L.divIcon({
     className: 'gf-pin',
@@ -20,7 +20,7 @@ function pinIcon(active) {
 // Foydalanuvchi joylashuvi pini
 const userIcon = L.divIcon({
   className: 'gf-userpin',
-  html: `<div style="width:18px;height:18px;border-radius:50%;background:#2b2b2b;border:3px solid #fff;box-shadow:0 0 0 4px rgba(118,118,118,.35),0 2px 5px rgba(0,0,0,.3)"></div>`,
+  html: `<div style="width:18px;height:18px;border-radius:50%;background:#262626;border:3px solid #fff;box-shadow:0 0 0 4px rgba(118,118,118,.35),0 2px 5px rgba(0,0,0,.3)"></div>`,
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 })
@@ -63,16 +63,16 @@ export default function BranchMap({ branches, activeId, userLoc, t }) {
       if (isNaN(b.lat) || isNaN(b.lon)) return
       const status = b.__status
       const badge = status?.open
-        ? `<span style="color:#3f7a52;font-weight:600">● ${t.openNow}</span>`
-        : `<span style="color:#c0473c;font-weight:600">● ${t.closedNow}</span>`
+        ? `<span style="color:#3d6b51;font-weight:600">● ${t.openNow}</span>`
+        : `<span style="color:#9a473d;font-weight:600">● ${t.closedNow}</span>`
       const dist = b.__dist != null ? ` · ${b.__distLabel}` : ''
       const m = L.marker([b.lat, b.lon], { icon: pinIcon(b.id === activeId) })
         .bindPopup(
           `<div style="font-family:'Hanken Grotesk',sans-serif;min-width:180px">
-            <div style="font-weight:700;font-size:14px;color:#2b2b2b;margin-bottom:3px">${b.name}</div>
-            <div style="font-size:12.5px;color:#6e6e6e;line-height:1.4;margin-bottom:6px">${b.addr}</div>
+            <div style="font-weight:700;font-size:14px;color:#262626;margin-bottom:3px">${b.name}</div>
+            <div style="font-size:12.5px;color:#6b6b6b;line-height:1.4;margin-bottom:6px">${b.addr}</div>
             <div style="font-size:12px;margin-bottom:8px">${badge}${dist}</div>
-            <a href="${b.routeUrl}" target="_blank" rel="noopener" style="display:inline-block;background:#5f5f5f;color:#fff;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;text-decoration:none">${t.route}</a>
+            <a href="${b.routeUrl}" target="_blank" rel="noopener" style="display:inline-block;font-family:'Quicksand',sans-serif;background:linear-gradient(180deg,#5a5a5a 0%,#454545 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.13);color:#fff;font-size:12.5px;font-weight:700;padding:7px 15px;border-radius:999px;text-decoration:none">${t.route}</a>
           </div>`,
           { closeButton: true }
         )
@@ -108,5 +108,5 @@ export default function BranchMap({ branches, activeId, userLoc, t }) {
     }
   }, [userLoc, t])
 
-  return <div ref={elRef} className="gf-map" style={{ width: '100%', height: 420, borderRadius: 18, overflow: 'hidden', border: '1px solid #e0e0e0', zIndex: 0 }} />
+  return <div ref={elRef} className="gf-map" style={{ width: '100%', height: 420, borderRadius: 20, overflow: 'hidden', border: '1px solid #e4e4e4', boxShadow: '0 2px 4px rgba(38,38,38,.05), 0 18px 40px -28px rgba(38,38,38,.42)', zIndex: 0 }} />
 }

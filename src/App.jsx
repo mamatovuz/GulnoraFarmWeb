@@ -11,10 +11,48 @@ import {
   Pill, Heart, Activity, Chat, Clock, Info, Navigate, Menu, Close
 } from './components/icons.jsx'
 
-// Brend palitrasi — logo foni #767676 dan olingan neytral kulrang shkala
-const BRAND = '#767676'   // logo rangi (bezak, faol holat, urg'u)
-const ACCENT = '#5f5f5f'  // asosiy tugmalar (oq matn bilan 6.4:1 kontrast)
-const INK = '#2b2b2b'     // sarlavhalar va to'q yuzalar
+// Brend palitrasi — bitta manbadan: logo foni #767676 (sof neytral, R=G=B).
+// To'liq shkala src/index.css dagi :root o'zgaruvchilarida.
+const BRAND = '#767676'   // ★ logo rangi — urg'u, faol holat, bezak
+const ACCENT = '#4f4f4f'  // asosiy tugmalar (oq matn bilan 8.2:1 kontrast)
+const INK = '#262626'     // sarlavhalar va to'q yuzalar
+const BODY = '#565656'    // asosiy matn (7.4:1)
+const MUTED = '#6b6b6b'   // ikkilamchi matn (5.3:1)
+const LINE = '#e4e4e4'    // chegaralar
+const TINT = '#efefef'    // ikonka uyalari, chiplar
+
+// Qorong'i bo'limlar uchun matn pog'onalari (grafit fon ustida)
+const D_TITLE = '#ffffff'
+const D_BODY = '#b0b0b0'
+const D_SOFT = '#e4e4e4'
+
+// Takrorlanuvchi yuzalar — rang emas, yorug'lik bilan chuqurlik
+const SURFACE = 'linear-gradient(180deg,#f7f7f7 0%,#efefef 100%)'
+const DARK = 'linear-gradient(158deg,#313131 0%,#262626 52%,#1d1d1d 100%)'
+
+// Shakl va shrift — logoning yumaloq, bir tekis monoliniyali xarakteriga moslangan.
+// Qoida: harakat qiluvchi element (tugma, chip, input) — kapsula;
+// idish (kartochka, panel) — yumshoq to'rtburchak; ikonka uyasi — doira.
+const DISPLAY = "'Quicksand', sans-serif" // logo yozuvidagi geometrik-yumaloq shrift
+const R_CARD = 20
+const R_PANEL = 28
+
+const btnBase = {
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 9,
+  fontFamily: DISPLAY, fontWeight: 700, letterSpacing: '.005em',
+  borderRadius: 999, border: 'none', cursor: 'pointer',
+}
+// Fon, gradient, soya va hover — .gf-btn-* / .gf-well klasslaridan keladi
+// (index.css). Bu yerda faqat geometriya va matn rangi qoladi, shunda
+// gradientni inline `background` bosib ketmaydi.
+const btnPrimary = { ...btnBase, color: '#fff' }
+const btnGhost = { ...btnBase, border: '1px solid #d6d6d6', color: INK }
+// Ikonka uyasi — logodagi doiraviy "G" ni takrorlaydi
+const dot = (size, bg) => ({
+  width: size, height: size, borderRadius: '50%', flex: 'none',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  ...(bg ? { background: bg } : null),
+})
 
 export default function App() {
   const [lang, setLang] = useState('uz')
@@ -87,7 +125,7 @@ export default function App() {
 /* ---------- PROMO BAR ---------- */
 function PromoBar({ t }) {
   return (
-    <div style={{ background: ACCENT, color: '#fff', fontSize: 13.5, letterSpacing: '.01em', textAlign: 'center', padding: '9px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }} className="gf-promo">
+    <div style={{ background: 'linear-gradient(90deg,#3a3a3a 0%,#4f4f4f 50%,#3a3a3a 100%)', color: '#fff', fontSize: 13.5, letterSpacing: '.01em', textAlign: 'center', padding: '9px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }} className="gf-promo">
       <Pin size={15} />
       <span>{t.promo}</span>
     </div>
@@ -103,32 +141,32 @@ function Header({ t, lang, setLang, menuOpen, setMenuOpen, closeMenu }) {
   const langBtn = (code, label) => {
     const active = lang === code
     return (
-      <button onClick={() => setLang(code)} style={{ border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: '6px 12px', borderRadius: 999, background: active ? '#ffffff' : 'transparent', color: active ? '#2b2b2b' : '#8a8a8a' }}>
+      <button onClick={() => setLang(code)} style={{ border: 'none', cursor: 'pointer', fontFamily: DISPLAY, fontSize: 13, fontWeight: 700, padding: '6px 12px', borderRadius: 999, background: active ? '#ffffff' : 'transparent', color: active ? INK : MUTED, boxShadow: active ? '0 1px 2px rgba(38,38,38,.14)' : 'none', transition: 'background .18s, color .18s' }}>
         {label}
       </button>
     )
   }
   return (
-    <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,.88)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: '1px solid #e6e6e6' }}>
+    <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,.86)', backdropFilter: 'blur(14px) saturate(120%)', WebkitBackdropFilter: 'blur(14px) saturate(120%)', borderBottom: '1px solid ' + LINE, boxShadow: '0 1px 20px -14px rgba(38,38,38,.5)' }}>
       <div className="gf-headpad" style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
         <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <Logo size={30} />
-          <span className="gf-wordmark" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, letterSpacing: '.005em', color: '#2b2b2b' }}>Gulnora Farm</span>
+          <span className="gf-wordmark" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, letterSpacing: '.005em', color: '#262626' }}>Gulnora Farm</span>
         </a>
         <nav className="gf-nav" style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
           {navLinks.map(([href, label]) => (
-            <a key={href} href={href} style={{ fontSize: 15, color: '#545454', fontWeight: 500 }}>{label}</a>
+            <a key={href} href={href} className="gf-navlink" style={{ fontFamily: DISPLAY, fontSize: 15, color: BODY, fontWeight: 600 }}>{label}</a>
           ))}
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div className="gf-social-desk" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <a href={TELEGRAM} target="_blank" rel="noopener" aria-label="Telegram" style={iconBtn}><Telegram size={19} /></a>
-            <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" style={iconBtn}><Instagram size={18} /></a>
+            <a href={TELEGRAM} target="_blank" rel="noopener" aria-label="Telegram" className="gf-well" style={iconBtn}><Telegram size={19} /></a>
+            <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" className="gf-well" style={iconBtn}><Instagram size={18} /></a>
           </div>
-          <div className="gf-langtoggle" style={{ display: 'flex', alignItems: 'center', background: '#efefef', borderRadius: 999, padding: 3 }}>
+          <div className="gf-langtoggle" style={{ display: 'flex', alignItems: 'center', background: TINT, borderRadius: 999, padding: 3, boxShadow: 'inset 0 0 0 1px rgba(38,38,38,.055)' }}>
             {langBtn('uz', 'UZ')}{langBtn('ru', 'RU')}
           </div>
-          <a className="gf-callbtn" href={`tel:${PHONE}`} style={{ display: 'flex', alignItems: 'center', gap: 8, background: ACCENT, color: '#fff', fontSize: 14.5, fontWeight: 600, padding: '11px 18px', borderRadius: 999 }}>
+          <a className="gf-callbtn gf-btn-primary" href={`tel:${PHONE}`} style={{ ...btnPrimary, gap: 8, fontSize: 14.5, padding: '11px 18px' }}>
             <Phone size={16} /><span className="gf-callbtn-text">{t.call}</span>
           </a>
           <button className="gf-burger" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
@@ -139,62 +177,64 @@ function Header({ t, lang, setLang, menuOpen, setMenuOpen, closeMenu }) {
       <div className="gf-mobile-menu">
         <div style={{ display: 'flex', flexDirection: 'column', padding: '6px 16px 18px' }}>
           {navLinks.map(([href, label], i) => (
-            <a key={href} href={href} onClick={closeMenu} style={{ padding: '13px 4px', fontSize: 16, fontWeight: 600, color: '#2b2b2b', borderBottom: i < navLinks.length - 1 ? '1px solid #ededed' : 'none' }}>{label}</a>
+            <a key={href} href={href} onClick={closeMenu} style={{ fontFamily: DISPLAY, padding: '13px 4px', fontSize: 16, fontWeight: 600, color: INK, borderBottom: i < navLinks.length - 1 ? '1px solid #ededed' : 'none' }}>{label}</a>
           ))}
-          <a href={`tel:${PHONE}`} onClick={closeMenu} style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, background: ACCENT, color: '#fff', fontWeight: 600, fontSize: 16, padding: 14, borderRadius: 13 }}>
+          <a href={`tel:${PHONE}`} onClick={closeMenu} className="gf-btn-primary" style={{ ...btnPrimary, marginTop: 14, fontSize: 16, padding: 14 }}>
             <Phone size={17} /> {PHONE_DISPLAY}
           </a>
           <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-            <a href={TELEGRAM} target="_blank" rel="noopener" style={mobSocial}><Telegram size={17} />Telegram</a>
-            <a href={INSTAGRAM} target="_blank" rel="noopener" style={mobSocial}><Instagram size={16} />Instagram</a>
+            <a href={TELEGRAM} target="_blank" rel="noopener" className="gf-well" style={mobSocial}><Telegram size={17} />Telegram</a>
+            <a href={INSTAGRAM} target="_blank" rel="noopener" className="gf-well" style={mobSocial}><Instagram size={16} />Instagram</a>
           </div>
         </div>
       </div>
     </header>
   )
 }
-const iconBtn = { width: 38, height: 38, borderRadius: 10, background: '#efefef', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2b2b2b' }
-const mobSocial = { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#efefef', borderRadius: 12, padding: 12, fontWeight: 600, fontSize: 14, color: '#2b2b2b' }
+const iconBtn = { ...dot(38), color: INK }
+const mobSocial = { ...btnBase, flex: 1, gap: 8, padding: 12, fontSize: 14, color: INK }
 
 /* ---------- HERO ---------- */
 function Hero({ t }) {
   return (
-    <section id="top" style={{ background: '#f4f4f4', position: 'relative', overflow: 'hidden' }}>
-      <div className="gf-hero gf-heropad" style={{ maxWidth: 1200, margin: '0 auto', padding: '74px 24px 88px', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }}>
+    <section id="top" style={{ background: SURFACE, position: 'relative', overflow: 'hidden' }}>
+      {/* Brend kulrangidagi yumshoq yorug'lik — chuqurlik rang bilan emas, yorug'lik bilan */}
+      <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(760px 340px at 72% 4%, rgba(255,255,255,.72) 0%, rgba(255,255,255,0) 66%), radial-gradient(760px 400px at 4% 100%, rgba(118,118,118,.16) 0%, rgba(118,118,118,0) 68%)', pointerEvents: 'none' }} />
+      <div className="gf-hero gf-heropad" style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: '74px 24px 88px', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }}>
         <div style={{ animation: 'gfFade .7s ease both' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #e2e2e2', borderRadius: 999, padding: '7px 14px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.12em', textTransform: 'uppercase', color: ACCENT }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid ' + LINE, borderRadius: 999, padding: '7px 14px', boxShadow: '0 1px 2px rgba(38,38,38,.05)', fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.12em', textTransform: 'uppercase', color: ACCENT }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#767676', display: 'inline-block' }} />{t.heroEyebrow}
           </div>
-          <h1 className="gf-h1" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 52, lineHeight: 1.08, letterSpacing: '-.015em', margin: '22px 0 0', color: '#2b2b2b', textWrap: 'balance' }}>{t.heroTitle}</h1>
-          <p className="gf-herosub" style={{ fontSize: 18, lineHeight: 1.6, color: '#5c5c5c', margin: '20px 0 0', maxWidth: 480 }}>{t.heroSub}</p>
+          <h1 className="gf-h1" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 52, lineHeight: 1.08, letterSpacing: '-.015em', margin: '22px 0 0', color: '#262626', textWrap: 'balance' }}>{t.heroTitle}</h1>
+          <p className="gf-herosub" style={{ fontSize: 18, lineHeight: 1.6, color: '#565656', margin: '20px 0 0', maxWidth: 480 }}>{t.heroSub}</p>
           <div className="gf-heroctas" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 32 }}>
-            <a href="#branches" style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: ACCENT, color: '#fff', fontWeight: 600, fontSize: 16, padding: '15px 26px', borderRadius: 14 }}>
+            <a href="#branches" className="gf-btn-primary" style={{ ...btnPrimary, fontSize: 16, padding: '15px 28px' }}>
               <Pin size={18} />{t.ctaBranches}
             </a>
-            <a href={`tel:${PHONE}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: '#fff', border: '1px solid #dcdcdc', color: '#2b2b2b', fontWeight: 600, fontSize: 16, padding: '15px 26px', borderRadius: 14 }}>
+            <a href={`tel:${PHONE}`} className="gf-btn-ghost" style={{ ...btnGhost, fontSize: 16, padding: '15px 28px' }}>
               <Phone size={18} />{t.ctaCall}
             </a>
           </div>
           <div className="gf-stats" style={{ display: 'flex', gap: 34, marginTop: 42 }}>
             <Stat num="10" label={t.statYears} />
-            <div className="gf-stat-div" style={{ width: 1, background: '#e0e0e0' }} />
+            <div className="gf-stat-div" style={{ width: 1, background: '#dedede' }} />
             <Stat num="19" label={t.statBranches} />
-            <div className="gf-stat-div" style={{ width: 1, background: '#e0e0e0' }} />
+            <div className="gf-stat-div" style={{ width: 1, background: '#dedede' }} />
             <Stat num="20K+" label={t.statClients} />
           </div>
         </div>
         <div style={{ position: 'relative', animation: 'gfFade .9s ease both' }}>
-          <ImageSlot src={HERO_IMAGE} alt="Gulnora Farm dorixonasi" className="gf-hero-img" radius={22} placeholder="Dorixona fotosi" style={{ height: 460, boxShadow: '0 30px 60px -28px rgba(43,43,43,.45)' }} />
-          <div className="gf-floatbadge" style={{ position: 'absolute', left: -18, bottom: 30, background: '#fff', borderRadius: 16, padding: '15px 18px', boxShadow: '0 18px 40px -20px rgba(43,43,43,.5)', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 42, height: 42, borderRadius: 11, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <ImageSlot src={HERO_IMAGE} alt="Gulnora Farm dorixonasi" className="gf-hero-img" radius={R_CARD} placeholder="Dorixona fotosi" style={{ height: 460, boxShadow: '0 4px 8px rgba(38,38,38,.06), 0 34px 64px -32px rgba(38,38,38,.5)' }} />
+          <div className="gf-floatbadge" style={{ position: 'absolute', left: -18, bottom: 30, background: '#fff', borderRadius: R_CARD, padding: '15px 18px', border: '1px solid ' + LINE, boxShadow: '0 2px 4px rgba(38,38,38,.05), 0 18px 40px -24px rgba(38,38,38,.42)', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="gf-well" style={dot(42)}>
               <Pin size={22} color={ACCENT} style={{ stroke: ACCENT }} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: '#2b2b2b' }}>{t.netBadgeNum} {t.netBadgeLabel}</div>
-              <div style={{ fontSize: 12.5, color: '#6e6e6e', marginTop: 1 }}>{t.netBadgeSub}</div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: '#262626' }}>{t.netBadgeNum} {t.netBadgeLabel}</div>
+              <div style={{ fontSize: 12.5, color: '#6b6b6b', marginTop: 1 }}>{t.netBadgeSub}</div>
             </div>
           </div>
-          <div className="gf-toplogo" style={{ position: 'absolute', right: -12, top: 26, background: BRAND, color: '#fff', borderRadius: 14, padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 10, boxShadow: '0 18px 40px -22px rgba(0,0,0,.6)' }}>
+          <div className="gf-toplogo" style={{ position: 'absolute', right: -12, top: 26, background: 'linear-gradient(180deg,#828282 0%,#767676 100%)', color: '#fff', borderRadius: 999, padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10, boxShadow: 'inset 0 1px 0 rgba(255,255,255,.16), 0 18px 40px -22px rgba(38,38,38,.65)' }}>
             <Logo size={22} variant="white" />
             <span style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 14 }}>Gulnora Farm</span>
           </div>
@@ -206,8 +246,8 @@ function Hero({ t }) {
 function Stat({ num, label }) {
   return (
     <div>
-      <CountUp value={num} className="gf-stat-num" style={{ display: 'block', fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 30, color: '#2b2b2b' }} />
-      <div style={{ fontSize: 13.5, color: '#6e6e6e', marginTop: 2 }}>{label}</div>
+      <CountUp value={num} className="gf-stat-num" style={{ display: 'block', fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 30, color: '#262626' }} />
+      <div style={{ fontSize: 13.5, color: '#6b6b6b', marginTop: 2 }}>{label}</div>
     </div>
   )
 }
@@ -216,7 +256,7 @@ function Stat({ num, label }) {
 function Trust({ t }) {
   const feats = [
     [<Shield key="s" />, t.feat1t, t.feat1d],
-    [<Check key="c" color="#2b2b2b" sw={1.8} size={23} />, t.feat2t, t.feat2d],
+    [<Check key="c" color="#262626" sw={1.8} size={23} />, t.feat2t, t.feat2d],
     [<Gear key="g" />, t.feat3t, t.feat3d],
     [<Users key="u" />, t.feat4t, t.feat4d]
   ]
@@ -225,10 +265,10 @@ function Trust({ t }) {
       <div className="gf-grid4 gf-pad gf-reveal" style={{ maxWidth: 1200, margin: '0 auto', padding: '54px 24px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 22 }}>
         {feats.map(([icon, title, desc], i) => (
           <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-            <div style={{ flex: 'none', width: 46, height: 46, borderRadius: 13, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{icon}</div>
+            <div className="gf-well" style={dot(46)}>{icon}</div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15.5 }}>{title}</div>
-              <div style={{ fontSize: 13.5, color: '#6e6e6e', marginTop: 3, lineHeight: 1.45 }}>{desc}</div>
+              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15.5 }}>{title}</div>
+              <div style={{ fontSize: 13.5, color: '#6b6b6b', marginTop: 3, lineHeight: 1.45 }}>{desc}</div>
             </div>
           </div>
         ))}
@@ -240,23 +280,24 @@ function Trust({ t }) {
 /* ---------- ABOUT ---------- */
 function About({ t }) {
   return (
-    <section id="about" style={{ background: INK, color: '#e6e6e6' }}>
-      <div className="gf-about gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '88px 24px', display: 'grid', gridTemplateColumns: '.95fr 1.05fr', gap: 56, alignItems: 'center' }}>
+    <section id="about" style={{ background: DARK, color: D_SOFT, position: 'relative', overflow: 'hidden' }}>
+      <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(800px 400px at 88% 0%, rgba(118,118,118,.30) 0%, rgba(118,118,118,0) 60%)', pointerEvents: 'none' }} />
+      <div className="gf-about gf-pad" style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: '88px 24px', display: 'grid', gridTemplateColumns: '.95fr 1.05fr', gap: 56, alignItems: 'center' }}>
         <div className="gf-reveal" style={{ position: 'relative' }}>
-          <ImageSlot src={ABOUT_IMAGE} alt="Gulnora Farm jamoasi" className="gf-about-img" radius={20} placeholder="Jamoa / filial fotosi" style={{ height: 420 }} />
-          <div style={{ position: 'absolute', right: -16, bottom: -16, background: '#fff', color: '#2b2b2b', borderRadius: 16, padding: '16px 20px', boxShadow: '0 22px 44px -24px rgba(0,0,0,.6)' }}>
+          <ImageSlot src={ABOUT_IMAGE} alt="Gulnora Farm jamoasi" className="gf-about-img" radius={R_CARD} placeholder="Jamoa / filial fotosi" style={{ height: 420, boxShadow: '0 34px 64px -34px rgba(0,0,0,.7)' }} />
+          <div style={{ position: 'absolute', right: -16, bottom: -16, background: '#fff', color: INK, borderRadius: R_CARD, padding: '16px 20px', boxShadow: '0 22px 44px -22px rgba(0,0,0,.75)' }}>
             <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 26 }}>{t.aboutNum}</div>
-            <div style={{ fontSize: 12.5, color: '#6e6e6e', marginTop: 2 }}>{t.aboutNumLabel}</div>
+            <div style={{ fontSize: 12.5, color: '#6b6b6b', marginTop: 2 }}>{t.aboutNumLabel}</div>
           </div>
         </div>
         <div className="gf-reveal gf-d1">
-          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: '#a8a8a8' }}>{t.aboutEyebrow}</div>
+          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: '#a6a6a6' }} className="gf-eyebrow gf-eyebrow-dark">{t.aboutEyebrow}</div>
           <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 36, lineHeight: 1.15, letterSpacing: '-.01em', marginTop: 12, color: '#fff', textWrap: 'balance' }}>{t.aboutTitle}</h2>
-          <p style={{ fontSize: 16.5, lineHeight: 1.65, color: '#b5b5b5', marginTop: 18 }}>{t.aboutText}</p>
+          <p style={{ fontSize: 16.5, lineHeight: 1.65, color: D_BODY, marginTop: 18 }}>{t.aboutText}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 26 }}>
             {[t.aboutP1, t.aboutP2, t.aboutP3].map((p, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Check size={22} color="#c4c4c4" /><span style={{ fontSize: 16, color: '#e2e2e2' }}>{p}</span>
+                <Check size={22} color="#c6c6c6" /><span style={{ fontSize: 16, color: D_SOFT }}>{p}</span>
               </div>
             ))}
           </div>
@@ -278,16 +319,16 @@ function Services({ t }) {
     <section id="services" style={{ background: '#fff' }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
         <div className="gf-reveal" style={{ textAlign: 'center', marginBottom: 44 }}>
-          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: ACCENT }}>{t.navServices}</div>
-          <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#2b2b2b' }}>{t.svcTitle}</h2>
-          <p style={{ fontSize: 16, color: '#6e6e6e', marginTop: 10, maxWidth: 520, marginLeft: 'auto', marginRight: 'auto' }}>{t.svcSub}</p>
+          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: BRAND }} className="gf-eyebrow gf-eyebrow-c">{t.navServices}</div>
+          <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#262626' }}>{t.svcTitle}</h2>
+          <p style={{ fontSize: 16, color: '#6b6b6b', marginTop: 10, maxWidth: 520, marginLeft: 'auto', marginRight: 'auto' }}>{t.svcSub}</p>
         </div>
         <div className="gf-grid4 gf-reveal gf-d1" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 22 }}>
           {svc.map(([icon, title, desc], i) => (
-            <div key={i} style={{ background: '#fafafa', border: '1px solid #e4e4e4', borderRadius: 18, padding: 26 }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{icon}</div>
-              <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, color: '#2b2b2b', marginTop: 18 }}>{title}</div>
-              <div style={{ fontSize: 14, color: '#6e6e6e', marginTop: 7, lineHeight: 1.5 }}>{desc}</div>
+            <div key={i} className="gf-card gf-svc" style={{ background: 'linear-gradient(180deg,#ffffff 0%,#fafafa 100%)', border: '1px solid ' + LINE, borderRadius: R_CARD, padding: 26 }}>
+              <div className="gf-well" style={dot(52)}>{icon}</div>
+              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 19, color: INK, marginTop: 18 }}>{title}</div>
+              <div style={{ fontSize: 14, color: '#6b6b6b', marginTop: 7, lineHeight: 1.5 }}>{desc}</div>
             </div>
           ))}
         </div>
@@ -356,33 +397,33 @@ function Branches({ t, branches }) {
   }
 
   return (
-    <section id="branches" style={{ background: '#f4f4f4' }}>
+    <section id="branches" style={{ background: SURFACE }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
         <div className="gf-reveal" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', marginBottom: 26 }}>
           <div>
-            <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: ACCENT }}>{t.navBranches}</div>
-            <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#2b2b2b' }}>{t.branchTitle}</h2>
+            <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: BRAND }} className="gf-eyebrow">{t.navBranches}</div>
+            <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#262626' }}>{t.branchTitle}</h2>
           </div>
-          <p style={{ fontSize: 16, color: '#6e6e6e', maxWidth: 360 }}>{t.branchSub}</p>
+          <p style={{ fontSize: 16, color: '#6b6b6b', maxWidth: 360 }}>{t.branchSub}</p>
         </div>
 
         {/* Qidiruv + eng yaqin */}
         <div className="gf-reveal" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
           <div style={{ position: 'relative', flex: '1 1 320px' }}>
-            <span style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#9a9a9a', pointerEvents: 'none' }}>
+            <span style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#9e9e9e', pointerEvents: 'none' }}>
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
             </span>
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder={t.searchPlaceholder} className="gf-input"
-              style={{ width: '100%', border: '1px solid #dcdcdc', background: '#fff', borderRadius: 13, padding: '14px 15px 14px 44px', fontSize: 15, color: '#2b2b2b', outline: 'none' }} />
+              style={{ width: '100%', border: '1px solid #d6d6d6', background: '#fff', borderRadius: 999, padding: '14px 18px 14px 46px', fontSize: 15, color: INK, outline: 'none' }} />
             {query && (
-              <button onClick={() => setQuery('')} aria-label={t.clearSearch}
-                style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: '#efefef', cursor: 'pointer', width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6e6e6e' }}>
+              <button onClick={() => setQuery('')} aria-label={t.clearSearch} className="gf-well"
+                style={{ ...dot(28, '#efefef'), position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', border: 'none', cursor: 'pointer', color: '#6b6b6b' }}>
                 <Close size={16} />
               </button>
             )}
           </div>
-          <button onClick={findNearest} disabled={geoState === 'loading'}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 9, background: ACCENT, color: '#fff', border: 'none', cursor: geoState === 'loading' ? 'wait' : 'pointer', fontWeight: 600, fontSize: 15, padding: '14px 20px', borderRadius: 13, flex: 'none' }}>
+          <button onClick={findNearest} disabled={geoState === 'loading'} className="gf-btn-primary"
+            style={{ ...btnPrimary, cursor: geoState === 'loading' ? 'wait' : 'pointer', fontSize: 15, padding: '14px 22px', flex: 'none' }}>
             {geoState === 'loading'
               ? <span className="gf-spin" style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.4)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block' }} />
               : <Pin size={17} />}
@@ -395,14 +436,14 @@ function Branches({ t, branches }) {
           {regionKeys.map(rk => {
             const active = region === rk
             return (
-              <button key={rk} onClick={() => setRegion(rk)}
-                style={{ border: '1px solid ' + (active ? ACCENT : '#dcdcdc'), background: active ? ACCENT : '#fff', color: active ? '#fff' : '#545454', cursor: 'pointer', fontSize: 13.5, fontWeight: 600, padding: '8px 15px', borderRadius: 999, transition: 'all .15s' }}>
+              <button key={rk} onClick={() => setRegion(rk)} className={'gf-chip' + (active ? ' gf-chip-on' : '')}
+                style={{ ...btnBase, border: '1px solid ' + (active ? '#4f4f4f' : '#d6d6d6'), background: active ? 'linear-gradient(180deg,#5a5a5a 0%,#454545 100%)' : '#fff', color: active ? '#fff' : BODY, boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,.13), 0 6px 14px -8px rgba(38,38,38,.5)' : 'none', fontSize: 13.5, padding: '8px 16px' }}>
                 {t.regions[rk] || rk}
               </button>
             )
           })}
-          <span style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 13.5, color: '#8a8a8a' }}>
-            {geoState === 'error' ? <span style={{ color: '#c0473c' }}>{t.geoError}</span> : t.resultsCount(list.length, branches.length)}
+          <span style={{ marginLeft: 'auto', alignSelf: 'center', fontSize: 13.5, color: '#8c8c8c' }}>
+            {geoState === 'error' ? <span style={{ color: '#9a473d' }}>{t.geoError}</span> : t.resultsCount(list.length, branches.length)}
           </span>
         </div>
 
@@ -413,7 +454,7 @@ function Branches({ t, branches }) {
 
         {/* Kartochkalar */}
         {list.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8a8a8a', fontSize: 16 }}>{t.noResults}</div>
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8c8c', fontSize: 16 }}>{t.noResults}</div>
         ) : (
           <div className="gf-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
             {list.map(b => <BranchCard key={b.id} b={b} t={t} active={b.id === activeId} onFocus={() => focusBranch(b.id)} />)}
@@ -426,10 +467,10 @@ function Branches({ t, branches }) {
 function OpenBadge({ status, t, dark }) {
   const open = status?.open
   const label = status?.open24 ? t.open24 : open ? t.openNow : t.closedNow
-  const color = open ? '#3f7a52' : '#c0473c'
-  const bg = dark ? 'rgba(0,0,0,.4)' : (open ? '#eef4ef' : '#fbeceb')
+  const color = open ? '#3d6b51' : '#9a473d'
+  const bg = dark ? 'rgba(28,28,28,.55)' : (open ? '#edf2ee' : '#f7ecea')
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: bg, color: dark ? '#fff' : color, fontSize: 12, fontWeight: 600, padding: '5px 10px', borderRadius: 999, backdropFilter: dark ? 'blur(4px)' : 'none', WebkitBackdropFilter: dark ? 'blur(4px)' : 'none' }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: bg, color: dark ? '#fff' : color, fontSize: 12, fontWeight: 600, padding: '5px 10px', borderRadius: 999, border: dark ? 'none' : '1px solid ' + (open ? '#d8e4dc' : '#ebd5d1'), backdropFilter: dark ? 'blur(4px)' : 'none', WebkitBackdropFilter: dark ? 'blur(4px)' : 'none' }}>
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, display: 'inline-block' }} />
       {label}{!open && !status?.open24 && status?.opensAt ? ` · ${status.opensAt} ${t.opensAtLabel}` : ''}
     </span>
@@ -438,43 +479,43 @@ function OpenBadge({ status, t, dark }) {
 function BranchCard({ b, t, active, onFocus }) {
   const stop = (e) => e.stopPropagation()
   return (
-    <div className="gf-branch-card" style={{ display: 'flex', flexDirection: 'column', background: '#fff', border: '1px solid ' + (active ? BRAND : '#e4e4e4'), borderRadius: 18, overflow: 'hidden', boxShadow: active ? '0 20px 44px -24px rgba(43,43,43,.55)' : 'none' }}>
+    <div className="gf-branch-card" style={{ display: 'flex', flexDirection: 'column', background: '#fff', border: '1px solid ' + (active ? BRAND : '#e4e4e4'), borderRadius: R_CARD, overflow: 'hidden', boxShadow: active ? '0 4px 8px rgba(38,38,38,.06), 0 30px 56px -28px rgba(38,38,38,.55)' : undefined }}>
       <button onClick={onFocus} title={t.onMap} style={{ position: 'relative', display: 'block', border: 'none', padding: 0, cursor: 'pointer', background: 'transparent', width: '100%' }}>
         <ImageSlot src={b.img} alt={b.name} placeholder="Filial fotosi" style={{ height: 158 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(20,20,22,.5),rgba(20,20,22,0) 55%)', pointerEvents: 'none' }} />
         <span style={{ position: 'absolute', top: 12, left: 12 }}><OpenBadge status={b.__status} t={t} dark /></span>
         {b.__dist != null && (
-          <span style={{ position: 'absolute', top: 12, right: 12, background: INK, color: '#fff', fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 999 }}>{b.__distLabel} {t.away}</span>
+          <span style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(38,38,38,.82)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', color: '#fff', fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 999 }}>{b.__distLabel} {t.away}</span>
         )}
         <div style={{ position: 'absolute', bottom: 11, left: 12, display: 'flex', alignItems: 'center', gap: 6, color: '#fff', fontSize: 12.5, fontWeight: 600, background: 'rgba(0,0,0,.32)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', padding: '5px 10px', borderRadius: 999 }}>
           <Pin size={13} />{t.onMap}
         </div>
       </button>
       <div style={{ padding: '17px 18px 18px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, color: '#2b2b2b' }}>{b.name}</div>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 19, color: INK }}>{b.name}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12, flex: 1 }}>
-          <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, color: '#6e6e6e' }}>
-            <span style={{ flex: 'none', marginTop: 1 }}><Pin size={17} color="#9a9a9a" style={{ stroke: '#9a9a9a' }} /></span>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, color: '#6b6b6b' }}>
+            <span style={{ flex: 'none', marginTop: 1 }}><Pin size={17} color="#9e9e9e" style={{ stroke: '#9e9e9e' }} /></span>
             <span style={{ lineHeight: 1.45 }}>{b.addr}</span>
           </div>
           {b.near ? (
-            <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 13, color: '#a8a8a8', marginTop: -2 }}>
+            <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 13, color: '#a6a6a6', marginTop: -2 }}>
               <span style={{ flex: 'none', marginTop: 1 }}><Info size={17} /></span>
               <span style={{ lineHeight: 1.4 }}>{b.near}</span>
             </div>
           ) : null}
-          <div style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, color: '#6e6e6e' }}>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, color: '#6b6b6b' }}>
             <span style={{ flex: 'none' }}><Clock size={17} /></span><span>{b.hours}</span>
           </div>
-          <a href={`tel:${b.tel}`} onClick={stop} style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, fontWeight: 600, color: '#2b2b2b' }}>
-            <span style={{ flex: 'none' }}><Phone size={17} color="#9a9a9a" style={{ stroke: '#9a9a9a' }} /></span><span>{b.phone}</span>
+          <a href={`tel:${b.tel}`} onClick={stop} style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, fontWeight: 600, color: '#262626' }}>
+            <span style={{ flex: 'none' }}><Phone size={17} color="#9e9e9e" style={{ stroke: '#9e9e9e' }} /></span><span>{b.phone}</span>
           </a>
         </div>
         <div style={{ display: 'flex', gap: 9, marginTop: 15 }}>
-          <a href={b.routeUrl} target="_blank" rel="noopener" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, background: ACCENT, color: '#fff', fontWeight: 600, fontSize: 13.5, padding: 11, borderRadius: 11 }}>
+          <a href={b.routeUrl} target="_blank" rel="noopener" className="gf-btn-primary" style={{ ...btnPrimary, flex: 1, gap: 7, fontSize: 13.5, padding: 12 }}>
             <Navigate size={16} />{t.route}
           </a>
-          <a href={`tel:${b.tel}`} onClick={stop} aria-label={b.phone} style={{ flex: 'none', width: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f0f0', borderRadius: 11, color: '#2b2b2b' }}>
+          <a href={`tel:${b.tel}`} onClick={stop} aria-label={b.phone} className="gf-well" style={{ ...dot(44), color: INK }}>
             <Phone size={18} />
           </a>
         </div>
@@ -488,25 +529,26 @@ function Vacancy({ t }) {
   return (
     <section id="vacancy" style={{ background: '#fff' }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
-        <div className="gf-vac gf-reveal" style={{ background: `linear-gradient(135deg, ${ACCENT} 0%, ${INK} 62%)`, borderRadius: 26, padding: '50px 56px', display: 'grid', gridTemplateColumns: '1.25fr .75fr', gap: 40, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', right: -60, top: -60, width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,255,255,.07)' }} />
+        <div className="gf-vac gf-reveal" style={{ background: 'linear-gradient(135deg,#5e5e5e 0%,#3a3a3a 45%,#242424 100%)', boxShadow: '0 40px 80px -44px rgba(38,38,38,.75)', borderRadius: R_PANEL, padding: '50px 56px', display: 'grid', gridTemplateColumns: '1.25fr .75fr', gap: 40, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div aria-hidden style={{ position: 'absolute', right: -60, top: -60, width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.11) 0%, rgba(255,255,255,0) 70%)' }} />
+          <div aria-hidden style={{ position: 'absolute', left: -80, bottom: -90, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(118,118,118,.28) 0%, rgba(118,118,118,0) 70%)' }} />
           <div style={{ position: 'relative' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 999, padding: '7px 14px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.12em', textTransform: 'uppercase', color: '#d8d8d8' }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c4c4c4', display: 'inline-block' }} />{t.vacEyebrow}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 999, padding: '7px 14px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.12em', textTransform: 'uppercase', color: '#d0d0d0' }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c6c6c6', display: 'inline-block' }} />{t.vacEyebrow}
             </div>
             <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 36, lineHeight: 1.15, letterSpacing: '-.01em', marginTop: 16, color: '#fff', textWrap: 'balance' }}>{t.vacTitle}</h2>
-            <p style={{ fontSize: 16.5, lineHeight: 1.6, color: '#b5b5b5', marginTop: 14, maxWidth: 520 }}>{t.vacText}</p>
+            <p style={{ fontSize: 16.5, lineHeight: 1.6, color: '#b0b0b0', marginTop: 14, maxWidth: 520 }}>{t.vacText}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 22, marginTop: 24 }}>
               {[t.vacP1, t.vacP2, t.vacP3].map((p, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, color: '#e2e2e2', fontSize: 14.5 }}>
-                  <Check size={19} color="#c4c4c4" />{p}
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, color: D_SOFT, fontSize: 14.5 }}>
+                  <Check size={19} color="#c6c6c6" />{p}
                 </div>
               ))}
             </div>
-            <a href={VACANCY_BOT} target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginTop: 30, background: '#fff', color: '#2b2b2b', fontWeight: 700, fontSize: 16, padding: '15px 26px', borderRadius: 14 }}>
+            <a href={VACANCY_BOT} target="_blank" rel="noopener" className="gf-btn-invert" style={{ ...btnBase, gap: 10, marginTop: 30, background: '#fff', color: INK, fontSize: 16, padding: '15px 28px' }}>
               <Telegram size={20} />{t.vacBtn}
             </a>
-            <div style={{ fontSize: 13, color: '#858585', marginTop: 12, display: 'flex', alignItems: 'center', gap: 7 }}>
+            <div style={{ fontSize: 13, color: '#9a9a9a', marginTop: 12, display: 'flex', alignItems: 'center', gap: 7 }}>
               <Telegram size={15} />@Gulnorafarmvacancy_bot
             </div>
           </div>
@@ -546,33 +588,33 @@ function Contact({ t, lang }) {
   const submitted = status === 'done'
   const sending = status === 'sending'
   return (
-    <section id="contact" style={{ background: '#f4f4f4' }}>
+    <section id="contact" style={{ background: SURFACE }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
         <div className="gf-reveal" style={{ textAlign: 'center', marginBottom: 42 }}>
-          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: ACCENT }}>{t.contactEyebrow}</div>
-          <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#2b2b2b' }}>{t.contactTitle}</h2>
+          <div style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 12.5, letterSpacing: '.13em', textTransform: 'uppercase', color: BRAND }} className="gf-eyebrow gf-eyebrow-c">{t.contactEyebrow}</div>
+          <h2 className="gf-sectitle" style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 38, letterSpacing: '-.01em', marginTop: 10, color: '#262626' }}>{t.contactTitle}</h2>
         </div>
         <div className="gf-contact gf-reveal gf-d1" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, alignItems: 'stretch' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <a href={`tel:${PHONE}`} className="gf-contact-card" style={{ background: '#fff', border: '1px solid #e4e4e4', borderRadius: 18, padding: 22, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ flex: 'none', width: 46, height: 46, borderRadius: 12, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Phone size={22} /></div>
-              <div><div style={{ fontWeight: 700, fontSize: 15, color: '#2b2b2b' }}>{t.phoneLabel}</div><div style={{ fontSize: 14.5, color: '#6e6e6e', marginTop: 4, lineHeight: 1.5 }}>{t.phoneValue}</div></div>
+            <a href={`tel:${PHONE}`} className="gf-contact-card" style={{ background: '#fff', border: '1px solid #e4e4e4', borderRadius: R_CARD, padding: 22, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+              <div className="gf-well" style={dot(46)}><Phone size={22} /></div>
+              <div><div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{t.phoneLabel}</div><div style={{ fontSize: 14.5, color: '#6b6b6b', marginTop: 4, lineHeight: 1.5 }}>{t.phoneValue}</div></div>
             </a>
-            <a href={TELEGRAM} target="_blank" rel="noopener" className="gf-contact-card tg" style={{ background: '#fff', border: '1px solid #e4e4e4', borderRadius: 18, padding: 22, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ flex: 'none', width: 46, height: 46, borderRadius: 12, background: '#eaf4fb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#229ED9' }}><Telegram size={22} /></div>
-              <div><div style={{ fontWeight: 700, fontSize: 15, color: '#2b2b2b' }}>{t.botLabel}</div><div style={{ fontSize: 14.5, color: '#6e6e6e', marginTop: 4, lineHeight: 1.5 }}>@gulnorafarm_bot</div></div>
+            <a href={TELEGRAM} target="_blank" rel="noopener" className="gf-contact-card tg" style={{ background: '#fff', border: '1px solid #e4e4e4', borderRadius: R_CARD, padding: 22, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+              <div className="gf-well" style={{ ...dot(46), color: INK }}><Telegram size={22} /></div>
+              <div><div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{t.botLabel}</div><div style={{ fontSize: 14.5, color: '#6b6b6b', marginTop: 4, lineHeight: 1.5 }}>@gulnorafarm_bot</div></div>
             </a>
             <div style={{ display: 'flex', gap: 12 }}>
-              <a href={TELEGRAM} target="_blank" rel="noopener" style={contactPill}><Telegram size={19} />Telegram</a>
-              <a href={INSTAGRAM} target="_blank" rel="noopener" style={contactPill}><Instagram size={18} />Instagram</a>
+              <a href={TELEGRAM} target="_blank" rel="noopener" className="gf-btn-ghost" style={contactPill}><Telegram size={19} />Telegram</a>
+              <a href={INSTAGRAM} target="_blank" rel="noopener" className="gf-btn-ghost" style={contactPill}><Instagram size={18} />Instagram</a>
             </div>
           </div>
-          <div style={{ background: '#fff', border: '1px solid #e4e4e4', borderRadius: 18, padding: 30 }}>
-            <h3 style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: 22, color: '#2b2b2b' }}>{t.formTitle}</h3>
+          <div className="gf-card" style={{ background: '#fff', border: '1px solid ' + LINE, borderRadius: R_CARD, padding: 30 }}>
+            <h3 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 22, color: INK }}>{t.formTitle}</h3>
             {submitted ? (
-              <div style={{ marginTop: 24, background: '#eef4ef', border: '1px solid #d5e6da', borderRadius: 14, padding: 26, display: 'flex', gap: 14, alignItems: 'center' }}>
-                <Check size={30} color="#3f7a52" />
-                <span style={{ fontSize: 16, color: '#2f6741', fontWeight: 600 }}>{t.formThanks}</span>
+              <div style={{ marginTop: 24, background: '#edf2ee', border: '1px solid #d8e4dc', borderRadius: 16, padding: 26, display: 'flex', gap: 14, alignItems: 'center' }}>
+                <Check size={30} color="#3d6b51" />
+                <span style={{ fontSize: 16, color: '#35604a', fontWeight: 600 }}>{t.formThanks}</span>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -580,12 +622,12 @@ function Contact({ t, lang }) {
                 <Field label={t.formPhone}><input name="phone" type="tel" required disabled={sending} placeholder="+998 __ ___ __ __" className="gf-input" style={inputStyle} /></Field>
                 <Field label={t.formMsg}><textarea name="message" rows={4} disabled={sending} className="gf-input" style={{ ...inputStyle, resize: 'vertical' }} /></Field>
                 {status === 'error' && (
-                  <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', background: '#fbeceb', border: '1px solid #f3d2cf', borderRadius: 11, padding: '12px 14px', fontSize: 13.5, color: '#a23b32', lineHeight: 1.45 }}>
+                  <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', background: '#f7ecea', border: '1px solid #ebd5d1', borderRadius: 14, padding: '12px 14px', fontSize: 13.5, color: '#8e4239', lineHeight: 1.45 }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
                     <span>{t.formError}</span>
                   </div>
                 )}
-                <button type="submit" disabled={sending} style={{ marginTop: 4, border: 'none', cursor: sending ? 'wait' : 'pointer', background: ACCENT, color: '#fff', fontWeight: 600, fontSize: 16, padding: 15, borderRadius: 13, opacity: sending ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                <button type="submit" disabled={sending} className="gf-btn-primary" style={{ ...btnPrimary, display: 'flex', marginTop: 4, cursor: sending ? 'wait' : 'pointer', fontSize: 16, padding: 15, opacity: sending ? 0.7 : 1, gap: 10 }}>
                   {sending && <span className="gf-spin" style={{ width: 17, height: 17, border: '2px solid rgba(255,255,255,.4)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block' }} />}
                   {sending ? t.formSending : t.formSend}
                 </button>
@@ -600,19 +642,19 @@ function Contact({ t, lang }) {
 function Field({ label, children }) {
   return (
     <div>
-      <label style={{ display: 'block', fontSize: 13.5, fontWeight: 600, color: '#545454', marginBottom: 7 }}>{label}</label>
+      <label style={{ display: 'block', fontSize: 13.5, fontWeight: 600, color: '#565656', marginBottom: 7 }}>{label}</label>
       {children}
     </div>
   )
 }
-const inputStyle = { width: '100%', border: '1px solid #dcdcdc', background: '#fafafa', borderRadius: 12, padding: '13px 15px', fontSize: 15, color: '#2b2b2b', outline: 'none' }
-const contactPill = { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, background: '#fff', border: '1px solid #e4e4e4', borderRadius: 14, padding: 15, fontWeight: 600, fontSize: 14.5, color: '#2b2b2b' }
+const inputStyle = { width: '100%', border: '1px solid #d6d6d6', background: '#fafafa', borderRadius: 14, padding: '13px 16px', fontSize: 15, color: INK, outline: 'none' }
+const contactPill = { ...btnGhost, flex: 1, border: '1px solid ' + LINE, padding: 15, fontSize: 14.5 }
 
 /* ---------- FOOTER ---------- */
 function Footer({ t }) {
   const navLinks = [['#about', t.navAbout], ['#services', t.navServices], ['#branches', t.navBranches], ['#vacancy', t.navVacancy], ['#contact', t.navContact]]
   return (
-    <footer style={{ background: '#232323', color: '#b4b4b4' }}>
+    <footer style={{ background: 'linear-gradient(180deg,#262626 0%,#1b1b1b 100%)', color: '#b4b4b4' }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '56px 24px 30px' }}>
         <div className="gf-foot" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 40 }}>
           <div>
@@ -620,11 +662,11 @@ function Footer({ t }) {
               <Logo size={30} variant="white" />
               <span style={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 19, color: '#fff' }}>Gulnora Farm</span>
             </div>
-            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: '#8e8e8e', marginTop: 16, maxWidth: 320 }}>{t.footTagline}</p>
+            <p style={{ fontSize: 14.5, lineHeight: 1.6, color: '#9a9a9a', marginTop: 16, maxWidth: 320 }}>{t.footTagline}</p>
             <div style={{ display: 'flex', gap: 11, marginTop: 18 }}>
               <a href={TELEGRAM} target="_blank" rel="noopener" aria-label="Telegram" style={footSocial}><Telegram size={19} /></a>
               <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" style={footSocial}><Instagram size={18} /></a>
-              <a href={VACANCY_BOT} target="_blank" rel="noopener" aria-label="Vacancy bot" style={footSocial}><Users size={19} color="#c8c8c8" /></a>
+              <a href={VACANCY_BOT} target="_blank" rel="noopener" aria-label="Vacancy bot" style={footSocial}><Users size={19} color="#d0d0d0" /></a>
             </div>
           </div>
           <div>
@@ -642,13 +684,13 @@ function Footer({ t }) {
             </div>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid #3c3c3c', marginTop: 36, paddingTop: 22, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-          <span style={{ fontSize: 13, color: '#757575' }}>© 2026 Gulnora Farm. {t.footRights}</span>
-          <span style={{ fontSize: 13, color: '#757575' }}>{t.footMade}</span>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.10)', marginTop: 36, paddingTop: 22, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+          <span style={{ fontSize: 13, color: '#909090' }}>© 2026 Gulnora Farm. {t.footRights}</span>
+          <span style={{ fontSize: 13, color: '#909090' }}>{t.footMade}</span>
         </div>
       </div>
     </footer>
   )
 }
-const footSocial = { width: 40, height: 40, borderRadius: 11, background: '#3a3a3a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c8c8c8' }
-const footHead = { fontFamily: "'Quicksand', sans-serif", fontWeight: 600, fontSize: 13, letterSpacing: '.08em', textTransform: 'uppercase', color: '#8a8a8a' }
+const footSocial = { ...dot(40, 'rgba(255,255,255,.07)'), color: '#d0d0d0', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,.09)' }
+const footHead = { fontFamily: DISPLAY, fontWeight: 700, fontSize: 13, letterSpacing: '.08em', textTransform: 'uppercase', color: '#9a9a9a' }

@@ -1,29 +1,81 @@
-/* ---------------------------------------------------------------
-   Gulnora Farm — brend palitrasi.
-   Asos: logo fonining rangi #767676 (neytral kulrang, R=G=B).
-   Butun shkala shu rangdan olingan — hech qanday iliq/bej ottenka yo'q.
-   --------------------------------------------------------------- */
+/* ===============================================================
+   GULNORA FARM — BREND PALITRASI
+   ---------------------------------------------------------------
+   Yagona manba: logo foni  #767676  (sof neytral kulrang, R=G=B=118)
+   va logo belgisi          #FFFFFF
+
+   Butun shkala shu bitta rangdan qurilgan — hech qanday iliq/bej,
+   ko'k yoki yashil ottenka yo'q. Har bir pog'ona R=G=B.
+   Chuqurlik rang bilan emas — yorug'lik, gradient va soya bilan
+   beriladi. Shuning uchun sayt logo bilan 100% uyg'un ko'rinadi.
+   =============================================================== */
 :root {
-  --gf-brand: #767676;      /* logo rangi — urg'u, faol holat, bezak */
-  --gf-brand-soft: #8c8c8c;
-  --gf-accent: #5f5f5f;     /* asosiy tugmalar (oq matn: 6.4:1) */
-  --gf-accent-hover: #4a4a4a;
-  --gf-ink: #2b2b2b;        /* sarlavhalar, to'q yuzalar */
-  --gf-ink-deep: #232323;   /* futer */
-  --gf-muted: #6e6e6e;      /* yordamchi matn */
-  --gf-muted-2: #8a8a8a;
-  --gf-line: #e4e4e4;       /* chegaralar */
-  --gf-line-strong: #dcdcdc;
-  --gf-tint: #f0f0f0;       /* ikonka plitalari, chiplar */
-  --gf-surface: #f4f4f4;    /* bo'lim foni */
-  --gf-card: #fafafa;
+  /* ---- Neytral shkala (asos: #767676) ---- */
+  --gf-0:    #ffffff;
+  --gf-25:   #fbfbfb;
+  --gf-50:   #f7f7f7;
+  --gf-75:   #f3f3f3;
+  --gf-100:  #efefef;
+  --gf-150:  #e8e8e8;
+  --gf-200:  #e0e0e0;
+  --gf-300:  #d2d2d2;
+  --gf-400:  #b4b4b4;
+  --gf-450:  #9e9e9e;
+  --gf-500:  #767676;   /* ★ LOGO RANGI */
+  --gf-550:  #6b6b6b;
+  --gf-600:  #5e5e5e;
+  --gf-650:  #565656;
+  --gf-700:  #4f4f4f;
+  --gf-750:  #454545;
+  --gf-800:  #3a3a3a;
+  --gf-850:  #2f2f2f;
+  --gf-900:  #262626;
+  --gf-950:  #1f1f1f;
+
+  /* ---- Semantik nomlar ---- */
+  --gf-brand:       var(--gf-500);   /* logo rangi — urg'u, faol holat, bezak */
+  --gf-brand-soft:  #8c8c8c;
+  --gf-ink:         var(--gf-900);   /* sarlavhalar */
+  --gf-body:        var(--gf-650);   /* asosiy matn        7.4:1 */
+  --gf-muted:       var(--gf-550);   /* ikkilamchi matn    5.3:1 */
+  --gf-faint:       #8c8c8c;         /* izoh, mayda yozuv */
+  --gf-btn:         var(--gf-700);   /* asosiy tugma       8.2:1 oq matn */
+  --gf-btn-hi:      #5a5a5a;         /* gradient yuqorisi */
+  --gf-btn-lo:      var(--gf-750);   /* gradient pasti */
+  --gf-line:        #e4e4e4;
+  --gf-line-2:      #d6d6d6;
+  --gf-tint:        var(--gf-100);   /* ikonka uyalari, chiplar */
+  --gf-surface:     var(--gf-50);    /* bo'lim foni */
+  --gf-card:        var(--gf-0);
+
+  /* ---- Holat ranglari (grafitga moslab pasaytirilgan to'yinganlik) ---- */
+  --gf-ok:      #3d6b51;
+  --gf-ok-bg:   #edf2ee;
+  --gf-ok-line: #d8e4dc;
+  --gf-no:      #9a473d;
+  --gf-no-bg:   #f7ecea;
+  --gf-no-line: #ebd5d1;
+
+  /* ---- Soyalar — neytral grafit tusida, ko'k emas ---- */
+  --gf-sh-xs: 0 1px 2px rgba(38,38,38,.05);
+  --gf-sh-sm: 0 1px 2px rgba(38,38,38,.05), 0 8px 22px -16px rgba(38,38,38,.30);
+  --gf-sh-md: 0 2px 4px rgba(38,38,38,.05), 0 18px 40px -24px rgba(38,38,38,.42);
+  --gf-sh-lg: 0 4px 8px rgba(38,38,38,.06), 0 34px 64px -32px rgba(38,38,38,.50);
+  --gf-sh-btn: inset 0 1px 0 rgba(255,255,255,.13), 0 1px 2px rgba(38,38,38,.18), 0 10px 22px -12px rgba(38,38,38,.55);
+
+  /* ---- Takrorlanuvchi yuzalar ---- */
+  --gf-grad-btn:   linear-gradient(180deg, var(--gf-btn-hi) 0%, var(--gf-btn-lo) 100%);
+  --gf-grad-dark:  linear-gradient(158deg, #313131 0%, #262626 52%, #1d1d1d 100%);
+  --gf-grad-tint:  linear-gradient(180deg, #f4f4f4 0%, #e9e9e9 100%);
+  --gf-grad-page:  linear-gradient(180deg, var(--gf-50) 0%, var(--gf-100) 100%);
+  --gf-ring:       0 0 0 3px rgba(118,118,118,.22);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: #ffffff;
+  background: var(--gf-0);
   font-family: 'Hanken Grotesk', system-ui, sans-serif;
   color: var(--gf-ink);
   -webkit-font-smoothing: antialiased;
@@ -31,7 +83,14 @@ body {
 }
 a { text-decoration: none; color: inherit; }
 input, textarea, button { font-family: inherit; }
-::placeholder { color: #a5a5a5; }
+::placeholder { color: var(--gf-450); }
+::selection { background: var(--gf-brand); color: #fff; }
+
+/* Klaviatura fokusi — brend halqasi */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--gf-brand);
+  outline-offset: 2px;
+}
 
 @keyframes gfFade {
   from { opacity: 0; transform: translateY(14px); }
@@ -41,28 +100,90 @@ input, textarea, button { font-family: inherit; }
 @keyframes gfSpin { to { transform: rotate(360deg); } }
 .gf-spin { animation: gfSpin .7s linear infinite; }
 
-/* Leaflet xarita — brendga moslash */
+/* ---------------------------------------------------------------
+   TUGMALAR — bitta grafit gradient, hamma joyda bir xil xatti-harakat
+   --------------------------------------------------------------- */
+.gf-btn-primary {
+  background: var(--gf-grad-btn);
+  box-shadow: var(--gf-sh-btn);
+  transition: background .2s, box-shadow .25s, transform .2s;
+}
+.gf-btn-primary:hover {
+  background: linear-gradient(180deg, #676767 0%, #4d4d4d 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 2px 4px rgba(38,38,38,.20), 0 16px 30px -14px rgba(38,38,38,.62);
+  transform: translateY(-1px);
+}
+.gf-btn-primary:active { transform: translateY(0); box-shadow: inset 0 2px 5px rgba(0,0,0,.24); }
+.gf-btn-primary[disabled] { transform: none; }
+
+.gf-btn-ghost {
+  background: var(--gf-0);
+  transition: border-color .2s, background .2s, box-shadow .25s, transform .2s;
+}
+.gf-btn-ghost:hover {
+  border-color: var(--gf-brand);
+  background: var(--gf-50);
+  box-shadow: var(--gf-sh-sm);
+  transform: translateY(-1px);
+}
+
+/* Qorong'i panel ustidagi oq tugma */
+.gf-btn-invert { transition: background .2s, box-shadow .25s, transform .2s; }
+.gf-btn-invert:hover { background: #f1f1f1; box-shadow: 0 16px 34px -16px rgba(0,0,0,.55); transform: translateY(-1px); }
+
+/* Ikonka uyasi — logodagi doiraviy "G" ni takrorlaydi */
+.gf-well {
+  background: var(--gf-grad-tint);
+  box-shadow: inset 0 0 0 1px rgba(38,38,38,.055);
+  transition: background .2s, box-shadow .2s, color .2s;
+}
+a.gf-well:hover, button.gf-well:hover {
+  background: linear-gradient(180deg, #ededed 0%, #e0e0e0 100%);
+  box-shadow: inset 0 0 0 1px rgba(38,38,38,.10);
+}
+
+/* ---------------------------------------------------------------
+   Leaflet xarita — brendga moslash
+   --------------------------------------------------------------- */
 .gf-map { position: relative; z-index: 0; }
-.leaflet-container { font-family: 'Hanken Grotesk', sans-serif; background: #ededed; }
-.leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 12px 32px -12px rgba(0,0,0,.4); }
+.leaflet-container { font-family: 'Hanken Grotesk', sans-serif; background: var(--gf-150); }
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  box-shadow: var(--gf-sh-md);
+  border: 1px solid var(--gf-line);
+}
 .leaflet-popup-content { margin: 14px 16px; }
 .leaflet-popup-tip { box-shadow: none; }
-.leaflet-bar a { border-radius: 8px !important; }
-.gf-pin, .gf-userpin { background: transparent !important; border: none !important; }
-
-/* Suzuvchi Telegram tugmasi — yengil puls */
-.gf-float-tg { animation: gfPulse 2.4s ease-in-out infinite; }
-@keyframes gfPulse {
-  0%, 100% { box-shadow: 0 12px 30px -8px rgba(34,158,217,.7), 0 0 0 0 rgba(34,158,217,.4); }
-  50% { box-shadow: 0 12px 30px -8px rgba(34,158,217,.7), 0 0 0 10px rgba(34,158,217,0); }
+.leaflet-bar a {
+  border-radius: 10px !important;
+  color: var(--gf-ink) !important;
+  border-color: var(--gf-line) !important;
 }
+.leaflet-bar a:hover { background: var(--gf-75) !important; }
+.gf-pin, .gf-userpin { background: transparent !important; border: none !important; }
+/* Xarita plitalarini brend kulrangiga yaqinlashtirish — rangli xarita
+   monoxrom saytdan ajralib turmasligi uchun yengil desaturatsiya */
+.leaflet-tile-pane { filter: saturate(.55) contrast(.96); }
+
+/* ---------------------------------------------------------------
+   Suzuvchi tugmalar — brend kulrangida puls
+   --------------------------------------------------------------- */
+.gf-float-tg { animation: gfPulse 2.6s ease-in-out infinite; }
+@keyframes gfPulse {
+  0%, 100% { box-shadow: var(--gf-sh-btn), 0 0 0 0 rgba(118,118,118,.42); }
+  50%      { box-shadow: var(--gf-sh-btn), 0 0 0 11px rgba(118,118,118,0); }
+}
+.gf-float { transition: transform .22s, box-shadow .25s, background .2s; }
+.gf-float:hover { transform: translateY(-2px) scale(1.04); }
 @media (prefers-reduced-motion: reduce) { .gf-float-tg { animation: none; } }
 
 @media (max-width: 620px) {
   .gf-map { height: 320px !important; }
 }
 
-/* Scroll reveal — only active once JS marks root ready, so content stays visible if JS fails */
+/* ---------------------------------------------------------------
+   Scroll reveal — JS tayyor bo'lgandagina yoqiladi
+   --------------------------------------------------------------- */
 .gf-ready .gf-reveal {
   opacity: 0;
   transform: translateY(26px);
@@ -76,32 +197,67 @@ input, textarea, button { font-family: inherit; }
   .gf-ready .gf-reveal { opacity: 1 !important; transform: none !important; transition: none; }
 }
 
-/* Branch card hover */
-.gf-branch-card { transition: box-shadow .25s, transform .25s, border-color .25s; }
+/* ---------------------------------------------------------------
+   Kartochkalar
+   --------------------------------------------------------------- */
+.gf-card { box-shadow: var(--gf-sh-xs); transition: box-shadow .28s, transform .28s, border-color .28s; }
+.gf-card:hover { box-shadow: var(--gf-sh-sm); border-color: var(--gf-line-2); }
+
+.gf-branch-card { box-shadow: var(--gf-sh-xs); transition: box-shadow .28s, transform .28s, border-color .28s; }
 .gf-branch-card:hover {
-  box-shadow: 0 24px 48px -28px rgba(43,43,43,.5);
+  box-shadow: var(--gf-sh-md);
   transform: translateY(-4px);
   border-color: var(--gf-brand-soft);
 }
+.gf-branch-card img { transition: transform .5s cubic-bezier(.16,.8,.3,1); }
+.gf-branch-card:hover img { transform: scale(1.045); }
 
-/* Contact card hover */
-.gf-contact-card { transition: border-color .2s; }
-.gf-contact-card:hover { border-color: var(--gf-brand); }
-.gf-contact-card.tg:hover { border-color: #229ED9; }
+.gf-contact-card { box-shadow: var(--gf-sh-xs); transition: border-color .2s, box-shadow .25s, transform .2s; }
+.gf-contact-card:hover { border-color: var(--gf-brand); box-shadow: var(--gf-sh-sm); transform: translateY(-2px); }
 
-/* Inputs */
-.gf-input { transition: border-color .2s; }
-.gf-input:focus { border-color: var(--gf-brand); box-shadow: 0 0 0 3px rgba(118,118,118,.14); }
+/* Xizmat kartochkasi — hover'da ikonka uyasi brendga bo'yaladi */
+.gf-svc:hover .gf-well {
+  background: linear-gradient(180deg, #7f7f7f 0%, #6d6d6d 100%);
+  box-shadow: inset 0 0 0 1px rgba(38,38,38,.10);
+  color: #fff;
+}
+.gf-svc:hover .gf-well svg { stroke: #fff; }
 
-/* Header mobile menu */
+/* Havolalar */
+.gf-navlink { position: relative; transition: color .2s; }
+.gf-navlink:hover { color: var(--gf-ink); }
+.gf-navlink::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px;
+  background: var(--gf-brand); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left; transition: transform .25s cubic-bezier(.16,.8,.3,1);
+}
+.gf-navlink:hover::after { transform: scaleX(1); }
+
+.gf-footlink { transition: color .18s; }
+.gf-footlink:hover { color: #fff; }
+
+/* Inputlar */
+.gf-input { transition: border-color .2s, box-shadow .2s, background .2s; }
+.gf-input:focus {
+  border-color: var(--gf-brand);
+  box-shadow: var(--gf-ring);
+  background: var(--gf-0);
+  outline: none;
+}
+
+/* Hudud chiplari */
+.gf-chip { transition: background .18s, border-color .18s, color .18s, box-shadow .18s; }
+.gf-chip:hover { border-color: var(--gf-brand); color: var(--gf-ink); }
+.gf-chip.gf-chip-on:hover { color: #fff; }
+
+/* Header burger */
 .gf-burger {
   display: none;
   border: none;
   cursor: pointer;
   width: 42px;
   height: 42px;
-  border-radius: 11px;
-  background: var(--gf-tint);
+  border-radius: 50%;
   align-items: center;
   justify-content: center;
   color: var(--gf-ink);
@@ -110,7 +266,23 @@ input, textarea, button { font-family: inherit; }
 .gf-mobile-menu { overflow: hidden; max-height: 0; transition: max-height .35s cubic-bezier(.16,.8,.3,1); }
 .gf-menu-open .gf-mobile-menu { max-height: 640px; }
 
-/* Responsive — desktop styles stay inline; these override at smaller widths */
+/* Bo'lim ustki yozuvi (eyebrow) yonidagi qisqa chiziq */
+.gf-eyebrow { display: inline-flex; align-items: center; gap: 10px; }
+.gf-eyebrow::before {
+  content: ''; width: 26px; height: 2px; border-radius: 2px;
+  background: var(--gf-brand); flex: none;
+}
+.gf-eyebrow-c { justify-content: center; }
+.gf-eyebrow-c::after {
+  content: ''; width: 26px; height: 2px; border-radius: 2px;
+  background: var(--gf-brand); flex: none;
+}
+.gf-eyebrow-dark::before, .gf-eyebrow-dark::after { background: var(--gf-450); }
+
+/* ---------------------------------------------------------------
+   Responsive — desktop uslublar inline qoladi, bular kichik
+   ekranlarda ustunlik qiladi
+   --------------------------------------------------------------- */
 @media (max-width: 920px) {
   .gf-hero { grid-template-columns: 1fr !important; gap: 34px !important; }
   .gf-about { grid-template-columns: 1fr !important; gap: 38px !important; }

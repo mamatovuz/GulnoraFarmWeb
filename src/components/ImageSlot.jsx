@@ -22,11 +22,13 @@ export default function ImageSlot({ src, alt = '', placeholder = 'Foto', radius 
       className={className}
       style={{
         ...base,
-        background: 'linear-gradient(135deg, #ececec 0%, #f0f0f0 50%, #e6e6e6 100%)',
+        // Brend kulrangining eng yorug' pog'onalari — placeholder ham palitradan chiqmaydi
+        background: 'linear-gradient(135deg, #f3f3f3 0%, #e8e8e8 55%, #dedede 100%)',
+        boxShadow: 'inset 0 0 0 1px rgba(38,38,38,.055)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#999999'
+        color: '#8c8c8c'
       }}
     >
       <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
