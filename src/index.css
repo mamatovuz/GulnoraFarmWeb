@@ -1,16 +1,37 @@
+/* ---------------------------------------------------------------
+   Gulnora Farm — brend palitrasi.
+   Asos: logo fonining rangi #767676 (neytral kulrang, R=G=B).
+   Butun shkala shu rangdan olingan — hech qanday iliq/bej ottenka yo'q.
+   --------------------------------------------------------------- */
+:root {
+  --gf-brand: #767676;      /* logo rangi — urg'u, faol holat, bezak */
+  --gf-brand-soft: #8c8c8c;
+  --gf-accent: #5f5f5f;     /* asosiy tugmalar (oq matn: 6.4:1) */
+  --gf-accent-hover: #4a4a4a;
+  --gf-ink: #2b2b2b;        /* sarlavhalar, to'q yuzalar */
+  --gf-ink-deep: #232323;   /* futer */
+  --gf-muted: #6e6e6e;      /* yordamchi matn */
+  --gf-muted-2: #8a8a8a;
+  --gf-line: #e4e4e4;       /* chegaralar */
+  --gf-line-strong: #dcdcdc;
+  --gf-tint: #f0f0f0;       /* ikonka plitalari, chiplar */
+  --gf-surface: #f4f4f4;    /* bo'lim foni */
+  --gf-card: #fafafa;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: #ffffff;
   font-family: 'Hanken Grotesk', system-ui, sans-serif;
-  color: #26262a;
+  color: var(--gf-ink);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 a { text-decoration: none; color: inherit; }
 input, textarea, button { font-family: inherit; }
-::placeholder { color: #a7a59f; }
+::placeholder { color: #a5a5a5; }
 
 @keyframes gfFade {
   from { opacity: 0; transform: translateY(14px); }
@@ -22,7 +43,7 @@ input, textarea, button { font-family: inherit; }
 
 /* Leaflet xarita — brendga moslash */
 .gf-map { position: relative; z-index: 0; }
-.leaflet-container { font-family: 'Hanken Grotesk', sans-serif; background: #eee; }
+.leaflet-container { font-family: 'Hanken Grotesk', sans-serif; background: #ededed; }
 .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 12px 32px -12px rgba(0,0,0,.4); }
 .leaflet-popup-content { margin: 14px 16px; }
 .leaflet-popup-tip { box-shadow: none; }
@@ -58,19 +79,19 @@ input, textarea, button { font-family: inherit; }
 /* Branch card hover */
 .gf-branch-card { transition: box-shadow .25s, transform .25s, border-color .25s; }
 .gf-branch-card:hover {
-  box-shadow: 0 24px 48px -28px rgba(38,38,42,.5);
+  box-shadow: 0 24px 48px -28px rgba(43,43,43,.5);
   transform: translateY(-4px);
-  border-color: #d6d2cb;
+  border-color: var(--gf-brand-soft);
 }
 
 /* Contact card hover */
 .gf-contact-card { transition: border-color .2s; }
-.gf-contact-card:hover { border-color: #26262a; }
+.gf-contact-card:hover { border-color: var(--gf-brand); }
 .gf-contact-card.tg:hover { border-color: #229ED9; }
 
 /* Inputs */
 .gf-input { transition: border-color .2s; }
-.gf-input:focus { border-color: #26262a; }
+.gf-input:focus { border-color: var(--gf-brand); box-shadow: 0 0 0 3px rgba(118,118,118,.14); }
 
 /* Header mobile menu */
 .gf-burger {
@@ -80,10 +101,10 @@ input, textarea, button { font-family: inherit; }
   width: 42px;
   height: 42px;
   border-radius: 11px;
-  background: #f1efeb;
+  background: var(--gf-tint);
   align-items: center;
   justify-content: center;
-  color: #26262a;
+  color: var(--gf-ink);
   flex: none;
 }
 .gf-mobile-menu { overflow: hidden; max-height: 0; transition: max-height .35s cubic-bezier(.16,.8,.3,1); }

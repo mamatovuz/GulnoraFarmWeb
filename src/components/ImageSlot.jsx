@@ -22,11 +22,11 @@ export default function ImageSlot({ src, alt = '', placeholder = 'Foto', radius 
       className={className}
       style={{
         ...base,
-        background: 'linear-gradient(135deg, #e9e7e2 0%, #f3f1ed 50%, #e4e1da 100%)',
+        background: 'linear-gradient(135deg, #ececec 0%, #f0f0f0 50%, #e6e6e6 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#9a988f'
+        color: '#999999'
       }}
     >
       <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
