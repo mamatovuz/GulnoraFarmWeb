@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { TR, withBranchUrls, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
+import { TR, withBranchUrls, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, daysUntilOpening, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
 import Logo from './components/Logo.jsx'
 import ImageSlot from './components/ImageSlot.jsx'
 import BranchMap from './components/BranchMap.jsx'
@@ -464,7 +464,17 @@ function Branches({ t, branches }) {
     </section>
   )
 }
-function OpenBadge({ status, t, dark }) {
+function OpenBadge({ status, t, dark, isComingSoon, daysUntil }) {
+  if (isComingSoon && daysUntil != null) {
+    const color = '#8b6f47'
+    const bg = dark ? 'rgba(28,28,28,.55)' : '#f5ede0'
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: bg, color: dark ? '#fff' : color, fontSize: 12, fontWeight: 600, padding: '5px 10px', borderRadius: 999, border: dark ? 'none' : '1px solid #ead9c8', backdropFilter: dark ? 'blur(4px)' : 'none', WebkitBackdropFilter: dark ? 'blur(4px)' : 'none' }}>
+        <span style={{ width: 7, height: 7, borderRadius: '50%', background: color, display: 'inline-block' }} />
+        {t.comingSoon} · {t.daysLeft(daysUntil)}
+      </span>
+    )
+  }
   const open = status?.open
   const label = status?.open24 ? t.open24 : open ? t.openNow : t.closedNow
   const color = open ? '#3d6b51' : '#9a473d'
@@ -478,13 +488,16 @@ function OpenBadge({ status, t, dark }) {
 }
 function BranchCard({ b, t, active, onFocus }) {
   const stop = (e) => e.stopPropagation()
+  const isComingSoon = b.status === 'coming_soon'
+  const daysUntil = b.daysUntilOpen
+
   return (
     <div className="gf-branch-card" style={{ display: 'flex', flexDirection: 'column', background: '#fff', border: '1px solid ' + (active ? BRAND : '#e4e4e4'), borderRadius: R_CARD, overflow: 'hidden', boxShadow: active ? '0 4px 8px rgba(38,38,38,.06), 0 30px 56px -28px rgba(38,38,38,.55)' : undefined }}>
       <button onClick={onFocus} title={t.onMap} style={{ position: 'relative', display: 'block', border: 'none', padding: 0, cursor: 'pointer', background: 'transparent', width: '100%' }}>
         <ImageSlot src={b.img} alt={b.name} placeholder="Filial fotosi" style={{ height: 158 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(20,20,22,.5),rgba(20,20,22,0) 55%)', pointerEvents: 'none' }} />
-        <span style={{ position: 'absolute', top: 12, left: 12 }}><OpenBadge status={b.__status} t={t} dark /></span>
-        {b.__dist != null && (
+        <span style={{ position: 'absolute', top: 12, left: 12 }}><OpenBadge status={b.__status} t={t} dark isComingSoon={isComingSoon} daysUntil={daysUntil} /></span>
+        {b.__dist != null && !isComingSoon && (
           <span style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(38,38,38,.82)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', color: '#fff', fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 999 }}>{b.__distLabel} {t.away}</span>
         )}
         <div style={{ position: 'absolute', bottom: 11, left: 12, display: 'flex', alignItems: 'center', gap: 6, color: '#fff', fontSize: 12.5, fontWeight: 600, background: 'rgba(0,0,0,.32)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', padding: '5px 10px', borderRadius: 999 }}>
@@ -504,20 +517,36 @@ function BranchCard({ b, t, active, onFocus }) {
               <span style={{ lineHeight: 1.4 }}>{b.near}</span>
             </div>
           ) : null}
-          <div style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, color: '#6b6b6b' }}>
-            <span style={{ flex: 'none' }}><Clock size={17} /></span><span>{b.hours}</span>
-          </div>
-          <a href={`tel:${b.tel}`} onClick={stop} style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, fontWeight: 600, color: '#262626' }}>
-            <span style={{ flex: 'none' }}><Phone size={17} color="#9e9e9e" style={{ stroke: '#9e9e9e' }} /></span><span>{b.phone}</span>
-          </a>
+          {isComingSoon ? (
+            <div style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, color: '#8b6f47', fontWeight: 600 }}>
+              <Clock size={17} />{t.comingSoon} · {t.daysLeft(daysUntil)}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, color: '#6b6b6b' }}>
+              <Clock size={17} /><span>{b.hours}</span>
+            </div>
+          )}
+          {!isComingSoon && (
+            <a href={`tel:${b.tel}`} onClick={stop} style={{ display: 'flex', gap: 9, alignItems: 'center', fontSize: 14, fontWeight: 600, color: '#262626' }}>
+              <span style={{ flex: 'none' }}><Phone size={17} color="#9e9e9e" style={{ stroke: '#9e9e9e' }} /></span><span>{b.phone}</span>
+            </a>
+          )}
         </div>
         <div style={{ display: 'flex', gap: 9, marginTop: 15 }}>
-          <a href={b.routeUrl} target="_blank" rel="noopener" className="gf-btn-primary" style={{ ...btnPrimary, flex: 1, gap: 7, fontSize: 13.5, padding: 12 }}>
-            <Navigate size={16} />{t.route}
-          </a>
-          <a href={`tel:${b.tel}`} onClick={stop} aria-label={b.phone} className="gf-well" style={{ ...dot(44), color: INK }}>
-            <Phone size={18} />
-          </a>
+          {isComingSoon ? (
+            <div style={{ flex: 1, padding: '12px 16px', borderRadius: 14, background: '#f5ede0', border: '1px solid #ead9c8', textAlign: 'center', fontSize: 14, fontWeight: 600, color: '#8b6f47' }}>
+              {t.comingSoon}
+            </div>
+          ) : (
+            <>
+              <a href={b.routeUrl} target="_blank" rel="noopener" className="gf-btn-primary" style={{ ...btnPrimary, flex: 1, gap: 7, fontSize: 13.5, padding: 12 }}>
+                <Navigate size={16} />{t.route}
+              </a>
+              <a href={`tel:${b.tel}`} onClick={stop} aria-label={b.phone} className="gf-well" style={{ ...dot(44), color: INK }}>
+                <Phone size={18} />
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>

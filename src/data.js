@@ -33,7 +33,9 @@ export const BRANCH_IMAGES = {
   br13: '/assets/g.jpg',  // Old Sitiy filiali
   br14: '/assets/g.jpg',  // Asaka filiali
   br15: '/assets/g.jpg',  // Qoʻrgʻontepa filiali
-  br16: '/assets/g.jpg'   // Xoʻjaobod filiali
+  br16: '/assets/g.jpg',  // Xoʻjaobod filiali
+  br17: '/assets/g.jpg',  // Novazo filiali
+  br18: '/assets/g.jpg'   // Margilon filiali
 }
 
 // Hero (yuqori) va "Biz haqimizda" bo'limidagi katta rasmlar (ixtiyoriy)
@@ -79,41 +81,45 @@ function esc(s = '') {
 }
 
 const uzBranches = [
-  { id: 'br1', name: 'Gorgaz filiali', addr: 'Andijon sh., Gorgaz krugavoy', near: 'Televideniye tomonga chiqishda', hours: '08:00 – 24:00', phone: '+998 97 266 31 00', lat: '40.747291', lon: '72.361420', tag: '' },
-  { id: 'br2', name: 'Eski shahar №1 filiali', addr: 'Andijon sh., Fitrat koʻchasi', near: 'Hamkorbank koʻchasi, Dunyo bozor oldida', hours: '08:00 – 24:00', phone: '+998 91 476 00 28', lat: '40.784818', lon: '72.346347', tag: '' },
-  { id: 'br3', name: 'Soy filiali', addr: 'Andijon sh., krugavoyda', near: '3-Poliklinika qatorida', hours: '08:00 – 24:00', phone: '+998 97 272 15 55', lat: '40.7979344', lon: '72.3459594', tag: '' },
-  { id: 'br4', name: 'Yangi bozor filiali', addr: 'Andijon sh., Boburshoh koʻchasi 37-B', near: 'Yangi bozor, Istanbul kafe qatorida', hours: '08:00 – 24:00', phone: '+998 95 917 17 46', lat: '40.7594818', lon: '72.3532151', tag: '' },
-  { id: 'br5', name: 'Jalabek filiali', addr: 'A. Yoʻldashev koʻchasi 7-uy', near: 'Alpomish meros qatorida', hours: '08:00 – 24:00', phone: '+998 93 476 00 28', lat: '40.759345', lon: '72.334462', tag: '' },
-  { id: 'br6', name: 'Soy №2 filiali', addr: 'Cholpon Shoh koʻchasi 46-uy', near: 'Jenshen qatorida', hours: '08:00 – 24:00', phone: '+998 88 475 00 28', lat: '40.796833', lon: '72.346242', tag: '' },
-  { id: 'br7', name: 'Sanchas filiali', addr: 'Klinika Med Sanchas', near: 'Sanchas svetofori yonida', hours: '08:00 – 24:00', phone: '+998 87 295 11 00', lat: '40.810534', lon: '72.326574', tag: '' },
-  { id: 'br8', name: 'Yangi bozor filiali №2', addr: 'Andijon sh., Boburshoh koʻchasi 37-B', near: 'Akmal farm yonida', hours: '08:00 – 24:00', phone: '+998 91 475 00 28', lat: '40.7594818', lon: '72.3532151', tag: '' },
-  { id: 'br9', name: 'Paytugʻ filiali', addr: 'Shifokorlar koʻchasi 1-uy', near: 'Bolalar shifoxonasi koʻprigida', hours: '08:00 – 24:00', phone: '+998 95 111 50 44', lat: '40.895216', lon: '72.256457', tag: '' },
-  { id: 'br10', name: 'Semashka filiali', addr: 'Mirpoʻstun koʻchasi', near: 'Toshkent mehmonxonasi oldida', hours: '08:00 – 24:00', phone: '+998 88 781 88 83', lat: '40.754213', lon: '72.375309', tag: '' },
-  { id: 'br11', name: 'Boston filiali', addr: 'Gulbadanbegim koʻchasi 6a-uy', near: '211 Damas stoyankasi yonida', hours: '08:00 – 24:00', phone: '+998 90 544 00 28', lat: '40.773943', lon: '72.384646', tag: '' },
-  { id: 'br12', name: 'Kanechka filiali', addr: 'Andijon sh., Furqat koʻchasi', near: 'Kanechka bozori roparasida', hours: '08:00 – 24:00', phone: '+998 90 203 39 03', lat: '40.743662', lon: '72.336832', tag: '' },
-  { id: 'br13', name: 'Old Sitiy filiali', addr: 'Andijon sh., Abdurauf Fitrat 251-b', near: 'Old Sitiy hududida', hours: '08:00 – 24:00', phone: '+998 94 486 00 28', lat: '40.785320', lon: '72.347544', tag: '' },
-  { id: 'br14', name: 'Asaka filiali', addr: 'Asaka sh., Umid koʻchasi', near: 'Dehqon bozor roparasida, tunel oldida', hours: '08:00 – 24:00', phone: '+998 88 779 10 01', lat: '40.646383', lon: '72.242480', tag: '' },
-  { id: 'br15', name: 'Qoʻrgʻontepa filiali', addr: 'Qoʻrgʻontepa tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 91 488 01 21', lat: '40.730607', lon: '72.759374', tag: '' },
-  { id: 'br16', name: 'Xoʻjaobod filiali', addr: 'Xoʻjaobod tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 90 203 00 28', lat: '40.669493', lon: '72.558542', tag: '' }
+  { id: 'br1', name: 'Gorgaz filiali', addr: 'Andijon sh., Gorgaz krugavoy', near: 'Televideniye tomonga chiqishda', hours: '08:00 – 24:00', phone: '+998 97 266 31 00', lat: '40.747291', lon: '72.361420', tag: '', status: 'open', opening_date: null },
+  { id: 'br2', name: 'Eski shahar №1 filiali', addr: 'Andijon sh., Fitrat koʻchasi', near: 'Hamkorbank koʻchasi, Dunyo bozor oldida', hours: '08:00 – 24:00', phone: '+998 91 476 00 28', lat: '40.784818', lon: '72.346347', tag: '', status: 'open', opening_date: null },
+  { id: 'br3', name: 'Soy filiali', addr: 'Andijon sh., krugavoyda', near: '3-Poliklinika qatorida', hours: '08:00 – 24:00', phone: '+998 97 272 15 55', lat: '40.7979344', lon: '72.3459594', tag: '', status: 'open', opening_date: null },
+  { id: 'br4', name: 'Yangi bozor filiali', addr: 'Andijon sh., Boburshoh koʻchasi 37-B', near: 'Yangi bozor, Istanbul kafe qatorida', hours: '08:00 – 24:00', phone: '+998 95 917 17 46', lat: '40.7594818', lon: '72.3532151', tag: '', status: 'open', opening_date: null },
+  { id: 'br5', name: 'Jalabek filiali', addr: 'A. Yoʻldashev koʻchasi 7-uy', near: 'Alpomish meros qatorida', hours: '08:00 – 24:00', phone: '+998 93 476 00 28', lat: '40.759345', lon: '72.334462', tag: '', status: 'open', opening_date: null },
+  { id: 'br6', name: 'Soy №2 filiali', addr: 'Cholpon Shoh koʻchasi 46-uy', near: 'Jenshen qatorida', hours: '08:00 – 24:00', phone: '+998 88 475 00 28', lat: '40.796833', lon: '72.346242', tag: '', status: 'open', opening_date: null },
+  { id: 'br7', name: 'Sanchas filiali', addr: 'Klinika Med Sanchas', near: 'Sanchas svetofori yonida', hours: '08:00 – 24:00', phone: '+998 87 295 11 00', lat: '40.810534', lon: '72.326574', tag: '', status: 'open', opening_date: null },
+  { id: 'br8', name: 'Yangi bozor filiali №2', addr: 'Andijon sh., Boburshoh koʻchasi 37-B', near: 'Akmal farm yonida', hours: '08:00 – 24:00', phone: '+998 91 475 00 28', lat: '40.7594818', lon: '72.3532151', tag: '', status: 'open', opening_date: null },
+  { id: 'br9', name: 'Paytugʻ filiali', addr: 'Shifokorlar koʻchasi 1-uy', near: 'Bolalar shifoxonasi koʻprigida', hours: '08:00 – 24:00', phone: '+998 95 111 50 44', lat: '40.895216', lon: '72.256457', tag: '', status: 'open', opening_date: null },
+  { id: 'br10', name: 'Semashka filiali', addr: 'Mirpoʻstun koʻchasi', near: 'Toshkent mehmonxonasi oldida', hours: '08:00 – 24:00', phone: '+998 88 781 88 83', lat: '40.754213', lon: '72.375309', tag: '', status: 'open', opening_date: null },
+  { id: 'br11', name: 'Boston filiali', addr: 'Gulbadanbegim koʻchasi 6a-uy', near: '211 Damas stoyankasi yonida', hours: '08:00 – 24:00', phone: '+998 90 544 00 28', lat: '40.773943', lon: '72.384646', tag: '', status: 'open', opening_date: null },
+  { id: 'br12', name: 'Kanechka filiali', addr: 'Andijon sh., Furqat koʻchasi', near: 'Kanechka bozori roparasida', hours: '08:00 – 24:00', phone: '+998 90 203 39 03', lat: '40.743662', lon: '72.336832', tag: '', status: 'open', opening_date: null },
+  { id: 'br13', name: 'Old Sitiy filiali', addr: 'Andijon sh., Abdurauf Fitrat 251-b', near: 'Old Sitiy hududida', hours: '08:00 – 24:00', phone: '+998 94 486 00 28', lat: '40.785320', lon: '72.347544', tag: '', status: 'open', opening_date: null },
+  { id: 'br14', name: 'Asaka filiali', addr: 'Asaka sh., Umid koʻchasi', near: 'Dehqon bozor roparasida, tunel oldida', hours: '08:00 – 24:00', phone: '+998 88 779 10 01', lat: '40.646383', lon: '72.242480', tag: '', status: 'open', opening_date: null },
+  { id: 'br15', name: 'Qoʻrgʻontepa filiali', addr: 'Qoʻrgʻontepa tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 91 488 01 21', lat: '40.730607', lon: '72.759374', tag: '', status: 'open', opening_date: null },
+  { id: 'br16', name: 'Xoʻjaobod filiali', addr: 'Xoʻjaobod tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 90 203 00 28', lat: '40.669493', lon: '72.558542', tag: '', status: 'open', opening_date: null },
+  { id: 'br17', name: 'Novazo filiali', addr: 'Andijon sh., Novazo koʻchasi', near: 'Novazo bozor roparasida', hours: '', phone: '+998 97 266 31 00', lat: '40.765234', lon: '72.340567', tag: '', status: 'coming_soon', opening_date: '2026-09-15' },
+  { id: 'br18', name: 'Margilon filiali', addr: 'Margilon sh., Sarrafon koʻchasi', near: 'Margilon matos markazi yonida', hours: '', phone: '+998 91 476 00 28', lat: '40.460123', lon: '71.748456', tag: '', status: 'coming_soon', opening_date: '2026-10-01' }
 ]
 
 const ruBranches = [
-  { id: 'br1', name: 'Филиал «Горгаз»', addr: 'Андижан, Горгаз кольцевая', near: 'У выезда к телевидению', hours: '08:00 – 24:00', phone: '+998 97 266 31 00', lat: '40.747291', lon: '72.361420', tag: '' },
-  { id: 'br2', name: 'Филиал «Эски шахар №1»', addr: 'Андижан, ул. Фитрат', near: 'Рядом с «Дунё бозор»', hours: '08:00 – 24:00', phone: '+998 91 476 00 28', lat: '40.784818', lon: '72.346347', tag: '' },
-  { id: 'br3', name: 'Филиал «Сой»', addr: 'Андижан, на кольцевой', near: 'Напротив 3-й поликлиники', hours: '08:00 – 24:00', phone: '+998 97 272 15 55', lat: '40.7979344', lon: '72.3459594', tag: '' },
-  { id: 'br4', name: 'Филиал «Янги бозор»', addr: 'Андижан, ул. Бобуршох 37-Б', near: 'Рядом с кафе «Истанбул»', hours: '08:00 – 24:00', phone: '+998 95 917 17 46', lat: '40.7594818', lon: '72.3532151', tag: '' },
-  { id: 'br5', name: 'Филиал «Жалабек»', addr: 'ул. А. Йулдашева, 7', near: 'Рядом с «Алпомиш мерос»', hours: '08:00 – 24:00', phone: '+998 93 476 00 28', lat: '40.759345', lon: '72.334462', tag: '' },
-  { id: 'br6', name: 'Филиал «Сой №2»', addr: 'ул. Чолпон Шох, 46', near: 'Рядом с «Женшен»', hours: '08:00 – 24:00', phone: '+998 88 475 00 28', lat: '40.796833', lon: '72.346242', tag: '' },
-  { id: 'br7', name: 'Филиал «Санчас»', addr: 'Клиника Мед Санчас', near: 'У светофора Санчас', hours: '08:00 – 24:00', phone: '+998 87 295 11 00', lat: '40.810534', lon: '72.326574', tag: '' },
-  { id: 'br8', name: 'Филиал «Янги бозор №2»', addr: 'Андижан, ул. Бобуршох 37-Б', near: 'Рядом с «Акмал фарм»', hours: '08:00 – 24:00', phone: '+998 91 475 00 28', lat: '40.7594818', lon: '72.3532151', tag: '' },
-  { id: 'br9', name: 'Филиал «Пайтуг»', addr: 'ул. Шифокорлар, 1', near: 'У моста детской больницы', hours: '08:00 – 24:00', phone: '+998 95 111 50 44', lat: '40.895216', lon: '72.256457', tag: '' },
-  { id: 'br10', name: 'Филиал «Семашко»', addr: 'ул. Мирпустун', near: 'Напротив гостиницы «Ташкент»', hours: '08:00 – 24:00', phone: '+998 88 781 88 83', lat: '40.754213', lon: '72.375309', tag: '' },
-  { id: 'br11', name: 'Филиал «Бостон»', addr: 'ул. Гулбаданбегим, 6а', near: 'Рядом со стоянкой 211 Дамас', hours: '08:00 – 24:00', phone: '+998 90 544 00 28', lat: '40.773943', lon: '72.384646', tag: '' },
-  { id: 'br12', name: 'Филиал «Канечка»', addr: 'Андижан, ул. Фурката', near: 'Напротив рынка «Канечка»', hours: '08:00 – 24:00', phone: '+998 90 203 39 03', lat: '40.743662', lon: '72.336832', tag: '' },
-  { id: 'br13', name: 'Филиал «Олд Сити»', addr: 'Андижан, Абдурауф Фитрат 251-б', near: 'Олд Сити', hours: '08:00 – 24:00', phone: '+998 94 486 00 28', lat: '40.785320', lon: '72.347544', tag: '' },
-  { id: 'br14', name: 'Филиал «Асака»', addr: 'г. Асака, ул. Умид', near: 'Напротив дехканского рынка, у тоннеля', hours: '08:00 – 24:00', phone: '+998 88 779 10 01', lat: '40.646383', lon: '72.242480', tag: '' },
-  { id: 'br15', name: 'Филиал «Кургантепа»', addr: 'Кургантепинский район', near: 'Рядом с ТЦ «Ишонч»', hours: '08:00 – 24:00', phone: '+998 91 488 01 21', lat: '40.730607', lon: '72.759374', tag: '' },
-  { id: 'br16', name: 'Филиал «Ходжаабад»', addr: 'Ходжаабадский район', near: 'Рядом с ТЦ «Ишонч»', hours: '08:00 – 24:00', phone: '+998 90 203 00 28', lat: '40.669493', lon: '72.558542', tag: '' }
+  { id: 'br1', name: 'Филиал «Горгаз»', addr: 'Андижан, Горгаз кольцевая', near: 'У выезда к телевидению', hours: '08:00 – 24:00', phone: '+998 97 266 31 00', lat: '40.747291', lon: '72.361420', tag: '', status: 'open', opening_date: null },
+  { id: 'br2', name: 'Филиал «Эски шахар №1»', addr: 'Андижан, ул. Фитрат', near: 'Рядом с «Дунё бозор»', hours: '08:00 – 24:00', phone: '+998 91 476 00 28', lat: '40.784818', lon: '72.346347', tag: '', status: 'open', opening_date: null },
+  { id: 'br3', name: 'Филиал «Сой»', addr: 'Андижан, на кольцевой', near: 'Напротив 3-й поликлиники', hours: '08:00 – 24:00', phone: '+998 97 272 15 55', lat: '40.7979344', lon: '72.3459594', tag: '', status: 'open', opening_date: null },
+  { id: 'br4', name: 'Филиал «Янги бозор»', addr: 'Андижан, ул. Бобуршох 37-Б', near: 'Рядом с кафе «Истанбул»', hours: '08:00 – 24:00', phone: '+998 95 917 17 46', lat: '40.7594818', lon: '72.3532151', tag: '', status: 'open', opening_date: null },
+  { id: 'br5', name: 'Филиал «Жалабек»', addr: 'ул. А. Йулдашева, 7', near: 'Рядом с «Алпомиш мерос»', hours: '08:00 – 24:00', phone: '+998 93 476 00 28', lat: '40.759345', lon: '72.334462', tag: '', status: 'open', opening_date: null },
+  { id: 'br6', name: 'Филиал «Сой №2»', addr: 'ул. Чолпон Шох, 46', near: 'Рядом с «Женшен»', hours: '08:00 – 24:00', phone: '+998 88 475 00 28', lat: '40.796833', lon: '72.346242', tag: '', status: 'open', opening_date: null },
+  { id: 'br7', name: 'Филиал «Санчас»', addr: 'Клиника Мед Санчас', near: 'У светофора Санчас', hours: '08:00 – 24:00', phone: '+998 87 295 11 00', lat: '40.810534', lon: '72.326574', tag: '', status: 'open', opening_date: null },
+  { id: 'br8', name: 'Филиал «Янги бозор №2»', addr: 'Андижан, ул. Бобуршох 37-Б', near: 'Рядом с «Акмал фарм»', hours: '08:00 – 24:00', phone: '+998 91 475 00 28', lat: '40.7594818', lon: '72.3532151', tag: '', status: 'open', opening_date: null },
+  { id: 'br9', name: 'Филиал «Пайтуг»', addr: 'ул. Шифокорлар, 1', near: 'У моста детской больницы', hours: '08:00 – 24:00', phone: '+998 95 111 50 44', lat: '40.895216', lon: '72.256457', tag: '', status: 'open', opening_date: null },
+  { id: 'br10', name: 'Филиал «Семашко»', addr: 'ул. Мирпустун', near: 'Напротив гостиницы «Ташкент»', hours: '08:00 – 24:00', phone: '+998 88 781 88 83', lat: '40.754213', lon: '72.375309', tag: '', status: 'open', opening_date: null },
+  { id: 'br11', name: 'Филиал «Бостон»', addr: 'ул. Гулбаданбегим, 6а', near: 'Рядом со стоянкой 211 Дамас', hours: '08:00 – 24:00', phone: '+998 90 544 00 28', lat: '40.773943', lon: '72.384646', tag: '', status: 'open', opening_date: null },
+  { id: 'br12', name: 'Филиал «Канечка»', addr: 'Андижан, ул. Фурката', near: 'Напротив рынка «Канечка»', hours: '08:00 – 24:00', phone: '+998 90 203 39 03', lat: '40.743662', lon: '72.336832', tag: '', status: 'open', opening_date: null },
+  { id: 'br13', name: 'Филиал «Олд Сити»', addr: 'Андижан, Абдурауф Фитрат 251-б', near: 'Олд Сити', hours: '08:00 – 24:00', phone: '+998 94 486 00 28', lat: '40.785320', lon: '72.347544', tag: '', status: 'open', opening_date: null },
+  { id: 'br14', name: 'Филиал «Асака»', addr: 'г. Асака, ул. Умид', near: 'Напротив дехканского рынка, у тоннеля', hours: '08:00 – 24:00', phone: '+998 88 779 10 01', lat: '40.646383', lon: '72.242480', tag: '', status: 'open', opening_date: null },
+  { id: 'br15', name: 'Филиал «Кургантепа»', addr: 'Кургантепинский район', near: 'Рядом с ТЦ «Ишонч»', hours: '08:00 – 24:00', phone: '+998 91 488 01 21', lat: '40.730607', lon: '72.759374', tag: '', status: 'open', opening_date: null },
+  { id: 'br16', name: 'Филиал «Ходжаабад»', addr: 'Ходжаабадский район', near: 'Рядом с ТЦ «Ишонч»', hours: '08:00 – 24:00', phone: '+998 90 203 00 28', lat: '40.669493', lon: '72.558542', tag: '', status: 'open', opening_date: null },
+  { id: 'br17', name: 'Филиал «Новаза»', addr: 'Андижан, ул. Новаза', near: 'Рядом с рынком Новаза', hours: '', phone: '+998 97 266 31 00', lat: '40.765234', lon: '72.340567', tag: '', status: 'coming_soon', opening_date: '2026-09-15' },
+  { id: 'br18', name: 'Филиал «Маргилан»', addr: 'г. Маргилан, ул. Сарraffone', near: 'Рядом с центром шелка Маргилана', hours: '', phone: '+998 91 476 00 28', lat: '40.460123', lon: '71.748456', tag: '', status: 'coming_soon', opening_date: '2026-10-01' }
 ]
 
 export const TR = {
@@ -145,6 +151,7 @@ export const TR = {
     svc4t: 'Farmatsevt maslahati', svc4d: 'Malakali mutaxassisdan bepul maslahat',
     branchTitle: 'Bizning filiallar', branchSub: 'Sizga eng yaqin Gulnora Farm filialini tanlang',
     onMap: 'Xaritada', route: 'Yoʻl koʻrsatish', botLabel: 'Telegram bot',
+    comingSoon: 'Tez kunda', daysLeft: (n) => n === 1 ? '1 kun' : `${n} kun`,
     vacEyebrow: 'Vakansiya', vacTitle: 'Bizning jamoaga qoʻshiling',
     vacText: 'Gulnora Farm tarmogʻi tez oʻsmoqda — bizga farmatsevtlar, sotuvchi-maslahatchilar va boshqa mutaxassislar kerak. Barcha boʻsh ish oʻrinlari Telegram botimizda.',
     vacP1: 'Rasmiy ish', vacP2: 'Munosib maosh', vacP3: 'Karyera oʻsishi',
@@ -210,6 +217,7 @@ export const TR = {
     svc4t: 'Консультация', svc4d: 'Бесплатная консультация специалиста',
     branchTitle: 'Наши филиалы', branchSub: 'Выберите ближайший к вам филиал Gulnora Farm',
     onMap: 'На карте', route: 'Построить маршрут', botLabel: 'Telegram-бот',
+    comingSoon: 'Скоро откроется', daysLeft: (n) => n === 1 ? '1 день' : n % 10 === 1 && n % 100 !== 11 ? `${n} день` : `${n} дней`,
     vacEyebrow: 'Вакансии', vacTitle: 'Присоединяйтесь к нашей команде',
     vacText: 'Сеть Gulnora Farm быстро растёт — нам нужны фармацевты, продавцы-консультанты и другие специалисты. Все открытые вакансии — в нашем Telegram-боте.',
     vacP1: 'Официальное трудоустройство', vacP2: 'Достойная зарплата', vacP3: 'Карьерный рост',
@@ -254,7 +262,7 @@ export const BRANCH_REGION = {
   br1: 'andijon', br2: 'andijon', br3: 'andijon', br4: 'andijon', br5: 'andijon',
   br6: 'andijon', br7: 'andijon', br8: 'andijon', br9: 'paytug', br10: 'andijon',
   br11: 'andijon', br12: 'andijon', br13: 'andijon', br14: 'asaka',
-  br15: 'qurgontepa', br16: 'xojaobod'
+  br15: 'qurgontepa', br16: 'xojaobod', br17: 'andijon', br18: 'andijon'
 }
 
 export function withBranchUrls(branches) {
@@ -269,7 +277,10 @@ export function withBranchUrls(branches) {
       lon: parseFloat(b.lon),
       region: BRANCH_REGION[b.id] || 'andijon',
       tel: (b.phone || '').replace(/[^\d+]/g, ''),
-      img: BRANCH_IMAGES[b.id] || '' // filial fotosi (yuqoridagi BRANCH_IMAGES dan)
+      img: BRANCH_IMAGES[b.id] || '', // filial fotosi (yuqoridagi BRANCH_IMAGES dan)
+      status: b.status || 'open',
+      opening_date: b.opening_date || null,
+      daysUntilOpen: b.status === 'coming_soon' ? daysUntilOpening(b.opening_date) : null
     }
   })
 }
@@ -305,4 +316,16 @@ export function branchOpenStatus(hours, now = new Date()) {
   const open = (c >= start && c < end) || (c + 1440 >= start && c + 1440 < end)
   const opensAt = m[1].padStart(2, '0') + ':' + m[2]
   return { open, open24, opensAt }
+}
+
+// Ochilish kunigacha qancha kun qolganini hisoblash
+export function daysUntilOpening(openingDate, now = new Date()) {
+  if (!openingDate) return null
+  const opening = new Date(openingDate)
+  opening.setHours(0, 0, 0, 0)
+  const today = new Date(now)
+  today.setHours(0, 0, 0, 0)
+  const diff = opening - today
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+  return days > 0 ? days : 0
 }

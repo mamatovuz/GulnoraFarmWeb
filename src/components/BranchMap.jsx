@@ -61,11 +61,17 @@ export default function BranchMap({ branches, activeId, userLoc, t }) {
     const pts = []
     branches.forEach(b => {
       if (isNaN(b.lat) || isNaN(b.lon)) return
+      const isComingSoon = b.status === 'coming_soon'
       const status = b.__status
-      const badge = status?.open
-        ? `<span style="color:#3d6b51;font-weight:600">● ${t.openNow}</span>`
-        : `<span style="color:#9a473d;font-weight:600">● ${t.closedNow}</span>`
-      const dist = b.__dist != null ? ` · ${b.__distLabel}` : ''
+      let badge
+      if (isComingSoon) {
+        badge = `<span style="color:#8b6f47;font-weight:600">● ${t.comingSoon}</span>`
+      } else {
+        badge = status?.open
+          ? `<span style="color:#3d6b51;font-weight:600">● ${t.openNow}</span>`
+          : `<span style="color:#9a473d;font-weight:600">● ${t.closedNow}</span>`
+      }
+      const dist = b.__dist != null && !isComingSoon ? ` · ${b.__distLabel}` : ''
       const m = L.marker([b.lat, b.lon], { icon: pinIcon(b.id === activeId) })
         .bindPopup(
           `<div style="font-family:'Hanken Grotesk',sans-serif;min-width:180px">
