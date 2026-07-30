@@ -97,8 +97,8 @@ const uzBranches = [
   { id: 'br14', name: 'Asaka filiali', addr: 'Asaka sh., Umid koʻchasi', near: 'Dehqon bozor roparasida, tunel oldida', hours: '08:00 – 24:00', phone: '+998 88 779 10 01', lat: '40.646383', lon: '72.242480', tag: '', status: 'open', opening_date: null },
   { id: 'br15', name: 'Qoʻrgʻontepa filiali', addr: 'Qoʻrgʻontepa tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 91 488 01 21', lat: '40.730607', lon: '72.759374', tag: '', status: 'open', opening_date: null },
   { id: 'br16', name: 'Xoʻjaobod filiali', addr: 'Xoʻjaobod tumani', near: 'Ishonch savdo majmuasi yonida', hours: '08:00 – 24:00', phone: '+998 90 203 00 28', lat: '40.669493', lon: '72.558542', tag: '', status: 'open', opening_date: null },
-  { id: 'br17', name: 'Asaka N2', addr: 'Andijon v', near: '', hours: '', phone: '+998 97 266 31 00', lat: '40.765234', lon: '72.340567', tag: '', status: 'coming_soon', opening_date: '2026-09-15' },
-  { id: 'br18', name: 'Chiobod filiali', addr: '', near: '', hours: '', phone: '+998 91 476 00 28', lat: '40.460123', lon: '71.748456', tag: '', status: 'coming_soon', opening_date: '2026-10-01' }
+  { id: 'br17', name: 'Asaka N2', addr: 'Andijon v', near: '', hours: '08:00 – 24:00', phone: '+998 97 266 31 00', lat: '40.765234', lon: '72.340567', tag: '', status: 'coming_soon', opening_date: '2026-09-15' },
+  { id: 'br18', name: 'Chiobod filiali', addr: 'Andijon viloyati', near: 'Markaziy poliklinika yonida', hours: '08:00 – 24:00', phone: '+998 94 096 00 28', lat: '40.460123', lon: '71.748456', tag: '', status: 'coming_soon', opening_date: '2026-10-01' }
 ]
 
 const ruBranches = [
