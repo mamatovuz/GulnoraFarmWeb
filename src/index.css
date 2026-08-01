@@ -381,6 +381,10 @@ a.gf-well:hover, button.gf-well:hover {
   .gf-marquee-track { animation: none; }
 }
 
+/* Yangiliklar ochilmasi — element hover */
+.gf-news-item { transition: background .15s; }
+.gf-news-item:hover { background: #f5f5f5; }
+
 /* Admin panel — mobil */
 @media (max-width: 760px) {
   .gf-admin-grid { grid-template-columns: 1fr !important; }

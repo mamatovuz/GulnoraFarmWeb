@@ -2,6 +2,7 @@
 // Login: admin@gulnorafarm.uz / 123@Gulnorafarm (server env orqali oʻzgartiriladi).
 import { useEffect, useState } from 'react'
 import { api, getToken, setToken, clearToken } from '../api.js'
+import { TR } from '../data.js'
 import Logo from '../components/Logo.jsx'
 import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close } from '../components/icons.jsx'
 
@@ -266,39 +267,133 @@ const REGIONS = [
   ['andijon', 'Andijon shahri'], ['asaka', 'Asaka'], ['qurgontepa', 'Qoʻrgʻontepa'],
   ['xojaobod', 'Xoʻjaobod'], ['paytug', 'Paytugʻ'],
 ]
+const REGION_LABEL = Object.fromEntries(REGIONS)
 const emptyBranch = { name: '', addr: '', near: '', hours: '08:00 – 24:00', phone: '', lat: '', lon: '', region: 'andijon', status: 'open', opening_date: '' }
+const STATIC_BRANCHES = TR.uz.branches // data.js dagi filiallar (asl matn)
+const FIELD_KEYS = ['name', 'addr', 'near', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
 
 function BranchesPanel() {
-  const [items, setItems] = useState([])
-  const [f, setF] = useState(emptyBranch)
-  const [file, setFile] = useState(null)
-  const [busy, setBusy] = useState(false)
+  const [admin, setAdmin] = useState([])
+  const [ovr, setOvr] = useState({}) // branch_id -> override
+  const [editing, setEditing] = useState(null) // { mode:'new'|'static'|'admin', id, initial, image }
   const [err, setErr] = useState('')
   useAuthGuard(err)
 
-  const load = () => api.getBranches().then(setItems).catch((e) => setErr(e.message))
+  const load = () =>
+    Promise.all([api.getBranches(), api.getOverrides()])
+      .then(([a, o]) => {
+        setAdmin(a)
+        const m = {}; o.forEach((x) => { m[x.branch_id] = x }); setOvr(m)
+      })
+      .catch((e) => setErr(e.message))
   useEffect(() => { load() }, [])
-  const set = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }))
 
-  const add = async (e) => {
+  // Statik filiallar (ustama qoʻllangan holda) + admin qoʻshganlari
+  const staticRows = STATIC_BRANCHES.map((s) => {
+    const o = ovr[s.id]
+    const eff = { ...s }
+    if (o) FIELD_KEYS.forEach((k) => { if (o[k] != null && o[k] !== '') eff[k] = o[k] })
+    return { ...eff, id: s.id, kind: 'static', hidden: !!(o && o.hidden), edited: !!(o && !o.hidden), image: o?.image || '' }
+  })
+  const adminRows = admin.map((b) => ({ ...b, kind: 'admin', edited: false, hidden: false }))
+  const rows = [...staticRows, ...adminRows]
+
+  const openNew = () => setEditing({ mode: 'new', id: null, initial: { ...emptyBranch }, image: '' })
+  const openEdit = (r) => {
+    const initial = {}; FIELD_KEYS.forEach((k) => { initial[k] = r[k] || '' })
+    if (!initial.opening_date) initial.opening_date = ''
+    setEditing({ mode: r.kind === 'static' ? 'static' : 'admin', id: r.id, initial, image: r.image })
+  }
+  const del = async (r) => {
+    if (!confirmDel()) return
+    try { r.kind === 'static' ? await api.hideBranch(r.id) : await api.delBranch(r.id); load() }
+    catch (e) { setErr(e.message) }
+  }
+  const restore = async (r) => {
+    try { await api.restoreBranch(r.id); load() } catch (e) { setErr(e.message) }
+  }
+
+  return (
+    <div>
+      <PanelHead title="Filiallar" sub="Eski va yangi filiallarni tahrirlash yoki oʻchirish mumkin" />
+      {err && <ErrorBox msg={err} />}
+      <button onClick={openNew} style={{ ...btnPrimary, marginBottom: 16 }}><Plus size={18} /> Yangi filial qoʻshish</button>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {rows.map((r) => (
+          <div key={r.id} style={{ ...card, padding: 16, display: 'flex', gap: 14, alignItems: 'center', opacity: r.hidden ? .55 : 1 }}>
+            {r.image
+              ? <img src={r.image} alt="" style={{ width: 72, height: 56, objectFit: 'cover', borderRadius: 10, flex: 'none' }} />
+              : <div style={{ width: 72, height: 56, borderRadius: 10, flex: 'none', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b5b5b5' }}><Pin size={20} /></div>}
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15.5, color: INK, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                {r.name}
+                {r.status === 'coming_soon' && <Tag text="tez kunda" c="#8b6f47" bg="#f5ede0" />}
+                {r.kind === 'admin' && <Tag text="yangi" c="#3d6b51" bg="#edf2ee" />}
+                {r.edited && <Tag text="tahrirlangan" c="#4a5a7a" bg="#eef1f7" />}
+                {r.hidden && <Tag text="oʻchirilgan" c="#a4483c" bg="#fbf1ef" />}
+              </div>
+              <div style={{ fontSize: 13, color: MUTED, marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {[REGION_LABEL[r.region] || r.region, r.addr, r.phone].filter(Boolean).join(' · ')}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flex: 'none' }}>
+              {r.hidden ? (
+                <button onClick={() => restore(r)} style={{ ...btn, padding: '8px 14px', background: '#edf2ee', color: '#35604a' }}>Qayta tiklash</button>
+              ) : (
+                <>
+                  <button onClick={() => openEdit(r)} style={{ ...btn, padding: '8px 14px', background: '#f0f0f0', color: INK }}>Tahrirlash</button>
+                  <button onClick={() => del(r)} title="Oʻchirish" style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid #ecd5d1', background: '#fbf1ef', color: '#a4483c', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash size={16} /></button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {editing && <BranchForm state={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />}
+    </div>
+  )
+}
+
+function Tag({ text, c, bg }) {
+  return <span style={{ fontSize: 11.5, fontWeight: 700, color: c, background: bg, padding: '2px 8px', borderRadius: 999 }}>{text}</span>
+}
+
+// Filial qoʻshish / tahrirlash — modal oyna
+function BranchForm({ state, onClose, onSaved }) {
+  const [f, setF] = useState(state.initial)
+  const [file, setFile] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const set = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }))
+  const isStatic = state.mode === 'static'
+
+  const submit = async (e) => {
     e.preventDefault(); setErr('')
     if (!f.name.trim()) { setErr('Filial nomini kiriting'); return }
     setBusy(true)
     try {
       const fd = new FormData()
-      Object.entries(f).forEach(([k, v]) => fd.append(k, v))
+      FIELD_KEYS.forEach((k) => fd.append(k, f[k] || ''))
       if (file) fd.append('image', file)
-      await api.addBranch(fd)
-      setF(emptyBranch); setFile(null); e.target.reset(); load()
+      if (state.mode === 'new') await api.addBranch(fd)
+      else if (isStatic) await api.saveOverride(state.id, fd)
+      else await api.editBranch(state.id, fd)
+      onSaved()
     } catch (e) { setErr(e.message) } finally { setBusy(false) }
   }
-  const del = async (id) => { if (!confirmDel()) return; await api.delBranch(id); load() }
 
+  const title = state.mode === 'new' ? 'Yangi filial' : 'Filialni tahrirlash'
   return (
-    <div>
-      <PanelHead title="Filiallar" sub="Bu yerda qoʻshilgan filiallar saytdagi roʻyxat va xaritaga chiqadi" />
-      {err && <ErrorBox msg={err} />}
-      <form onSubmit={add} style={{ ...card, marginBottom: 18 }}>
+    <div onMouseDown={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(20,20,22,.5)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '5vh 16px', zIndex: 100, overflowY: 'auto' }}>
+      <form onMouseDown={(e) => e.stopPropagation()} onSubmit={submit} style={{ ...card, width: 640, maxWidth: '100%', padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h2 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 21, color: INK, margin: 0 }}>{title}</h2>
+          <button type="button" onClick={onClose} style={{ border: 'none', background: '#f0f0f0', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Close size={18} /></button>
+        </div>
+        {isStatic && <div style={{ fontSize: 12.5, color: MUTED, background: '#f6f6f6', borderRadius: 10, padding: '10px 12px', marginBottom: 14 }}>ℹ️ Bu asl (data.js) filial. Oʻzgarishlar UZ va RU tillarida bir xil koʻrinadi.</div>}
+        {err && <ErrorBox msg={err} />}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
           <Field label="Filial nomi *"><input style={input} value={f.name} onChange={set('name')} placeholder="Masalan: Markaz filiali" /></Field>
           <Field label="Telefon"><input style={input} value={f.phone} onChange={set('phone')} placeholder="+998 XX XXX XX XX" /></Field>
@@ -322,28 +417,15 @@ function BranchesPanel() {
             <Field label="Ochilish sanasi"><input style={input} type="date" value={f.opening_date} onChange={set('opening_date')} /></Field>
           )}
         </div>
-        <div style={{ marginTop: 14 }}><FileField label="Filial rasmi (ixtiyoriy)" file={file} onChange={setFile} /></div>
-        <div style={{ fontSize: 12.5, color: MUTED, marginTop: 10 }}>
-          💡 Koordinatani Google Maps'da joyni bosib, pastdagi raqamlardan olasiz (masalan 40.78, 72.35).
+        <div style={{ marginTop: 14 }}>
+          <FileField label={'Filial rasmi (ixtiyoriy)' + (state.image ? ' — hozir rasm bor' : '')} file={file} onChange={setFile} />
         </div>
-        <button style={{ ...btnPrimary, marginTop: 14, opacity: busy ? .7 : 1 }} disabled={busy}><Plus size={18} /> {busy ? 'Qoʻshilmoqda…' : 'Filial qoʻshish'}</button>
+        <div style={{ fontSize: 12.5, color: MUTED, marginTop: 10 }}>💡 Koordinatani Google Maps'da joyni bosib, pastdagi raqamlardan olasiz.</div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          <button type="submit" disabled={busy} style={{ ...btnPrimary, opacity: busy ? .7 : 1 }}>{busy ? 'Saqlanmoqda…' : 'Saqlash'}</button>
+          <button type="button" onClick={onClose} style={{ ...btn, background: '#f0f0f0', color: INK }}>Bekor qilish</button>
+        </div>
       </form>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {items.map((b) => (
-          <div key={b.id} style={{ ...card, display: 'flex', gap: 14, alignItems: 'center', position: 'relative' }}>
-            {b.image && <img src={b.image} alt="" style={{ width: 84, height: 64, objectFit: 'cover', borderRadius: 10, flex: 'none' }} />}
-            <div style={{ minWidth: 0, flex: 1, paddingRight: 30 }}>
-              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 16, color: INK }}>
-                {b.name} {b.status === 'coming_soon' && <span style={{ fontSize: 12, color: '#8b6f47', fontWeight: 600 }}>· tez kunda</span>}
-              </div>
-              <div style={{ fontSize: 13, color: MUTED, marginTop: 3 }}>{b.addr}{b.phone ? ' · ' + b.phone : ''}</div>
-            </div>
-            <DelBtn onClick={() => del(b.id)} />
-          </div>
-        ))}
-        {items.length === 0 && <Empty text="Hozircha admin orqali qoʻshilgan filial yoʻq" />}
-      </div>
     </div>
   )
 }

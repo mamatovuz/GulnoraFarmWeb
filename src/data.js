@@ -275,6 +275,30 @@ export const BRANCH_REGION = {
   br15: 'qurgontepa', br16: 'xojaobod', br17: 'andijon', br18: 'andijon'
 }
 
+// Statik filiallar (t.branches) ustiga admin oʻzgarishlarini qoʻyadi:
+//  - override bor va hidden=1 → filial roʻyxatdan chiqadi (oʻchirilgan)
+//  - override bor → tahrirlangan maydonlar ustma-ust qoʻyiladi (rasm ham)
+//  - admin qoʻshgan filiallar roʻyxat oxiriga qoʻshiladi
+const OVERRIDE_FIELDS = ['name', 'addr', 'near', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
+export function applyBranchData(staticBranches, overrides = [], adminBranches = []) {
+  const map = {}
+  overrides.forEach((o) => { map[o.branch_id] = o })
+  const out = []
+  for (const b of staticBranches) {
+    const o = map[b.id]
+    if (o && o.hidden) continue
+    if (o) {
+      const patch = {}
+      OVERRIDE_FIELDS.forEach((f) => { if (o[f] != null && o[f] !== '') patch[f] = o[f] })
+      out.push({ ...b, ...patch, ...(o.image ? { img: o.image } : {}) })
+    } else {
+      out.push(b)
+    }
+  }
+  adminBranches.forEach((b) => out.push({ ...b, img: b.image }))
+  return out
+}
+
 export function withBranchUrls(branches) {
   return branches.map(b => {
     const mapUrl = 'https://www.google.com/maps?q=' + b.lat + ',' + b.lon + '&ll=' + b.lat + ',' + b.lon + '&z=16'

@@ -33,7 +33,14 @@ export const api = {
 
   getBranches: () => req('/api/branches'),
   addBranch: (form) => req('/api/branches', { method: 'POST', auth: true, isForm: true, body: form }),
+  editBranch: (id, form) => req('/api/branches/' + id, { method: 'PUT', auth: true, isForm: true, body: form }),
   delBranch: (id) => req('/api/branches/' + id, { method: 'DELETE', auth: true }),
+
+  // Statik (data.js) filiallar ustamasi — tahrirlash / yashirish / tiklash
+  getOverrides: () => req('/api/branch-overrides'),
+  saveOverride: (branchId, form) => req('/api/branch-overrides/' + branchId, { method: 'PUT', auth: true, isForm: true, body: form }),
+  hideBranch: (branchId) => req('/api/branch-overrides/' + branchId + '/hide', { method: 'POST', auth: true }),
+  restoreBranch: (branchId) => req('/api/branch-overrides/' + branchId + '/restore', { method: 'POST', auth: true }),
 }
 
 // Tashrifni belgilash — brauzerga bir marta ID beriladi (unikal tashrifchi uchun)

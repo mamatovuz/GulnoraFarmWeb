@@ -11,12 +11,47 @@ Andijon viloyati boʻylab **19f ta filialga** ega dorixonalar tarmogʻi — *Gul
 - 📞 Aloqa formasi, Telegram bot va Instagram havolalari
 - 💼 Vakansiya boʻlimi (Telegram bot orqali)
 
-## Ishga tushirish
+## Imkoniyatlar (yangi)
+
+- 🔐 **Admin panel** — `/admin` sahifasi, login/parol bilan
+- 🤝 **Hamkorlarimiz** — landing sahifada rasmlar oʻngdan chapga aylanib turadi; admin paneldan rasm yuklab qoʻshiladi
+- 🔔 **Yangiliklar** — navbardagi qoʻngʻiroq belgisida; admin rasm + matn bilan eʼlon qiladi
+- 🏥 **Filial qoʻshish** — admin paneldan yangi filial (rasm fayldan yuklanadi) qoʻshiladi
+- 📊 **Statistika** — bugun / shu oy / jami nechta odam saytga kirgani admin panelda koʻrinadi
+
+## Ishga tushirish (lokal, 2 ta terminal)
 
 ```bash
-npm install      # paketlarni oʻrnatish
-npm run dev      # http://localhost:5173 da ochiladi
+npm install          # paketlarni oʻrnatish (bir marta)
+
+# 1-terminal — backend (SQLite + API), 3000-portda
+npm run server
+
+# 2-terminal — frontend (Vite), 5173-portda
+npm run dev
 ```
+
+Sayt: http://localhost:5173 · Admin panel: http://localhost:5173/admin
+
+**Admin login (default):**
+`admin@gulnorafarm.uz` / `123@Gulnorafarm`
+(Railway'da `ADMIN_EMAIL` / `ADMIN_PASSWORD` orqali oʻzgartiriladi.)
+
+## Railway'ga deploy (SQLite + doimiy volume)
+
+1. Loyihani GitHub'ga yuklang va Railway'da **New Project → Deploy from GitHub**.
+2. **Variables** boʻlimiga qoʻshing:
+   ```
+   DATA_DIR=/data
+   ADMIN_EMAIL=admin@gulnorafarm.uz
+   ADMIN_PASSWORD=123@Gulnorafarm
+   JWT_SECRET=<uzun tasodifiy satr>
+   ```
+   (Telegram uchun avvalgi `VITE_TELEGRAM_*` qiymatlarni ham qoʻshing — ular build vaqtida kerak.)
+3. **Volume** yarating va **Mount path** ni `/data` qilib bogʻlang.
+   Baza (`app.db`) va yuklangan rasmlar shu volume'da saqlanadi — deploy'lar orasida yoʻqolmaydi.
+4. Railway avtomatik: `npm run build` (frontend) → `npm start` (server) qiladi (`nixpacks.toml`).
+   Server statik saytni va `/api` ni bitta portda beradi (`PORT` ni Railway oʻzi beradi).
 
 ## Telegram ariza yuborish (backendsiz) — sozlash
 

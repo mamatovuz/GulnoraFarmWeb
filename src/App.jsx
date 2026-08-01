@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { TR, withBranchUrls, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, daysUntilOpening, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
+import { TR, withBranchUrls, applyBranchData, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, daysUntilOpening, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
 import Logo from './components/Logo.jsx'
 import ImageSlot from './components/ImageSlot.jsx'
 import BranchMap from './components/BranchMap.jsx'
@@ -62,19 +62,19 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [ready, setReady] = useState(false)
   const [adminBranches, setAdminBranches] = useState([])
+  const [overrides, setOverrides] = useState([])
 
   const t = TR[lang]
-  // Statik filiallar + admin paneldan qoʻshilganlar
-  const branches = withBranchUrls([...t.branches, ...adminBranches])
+  // Statik filiallar + admin oʻzgarishlari (tahrir/oʻchirish) + admin qoʻshganlari
+  const branches = withBranchUrls(applyBranchData(t.branches, overrides, adminBranches))
 
   // Scroll-reveal — faqat mount boʻlgandan keyin yoqiladi
   useEffect(() => {
     setReady(true)
     trackVisit() // tashrifni statistikaga yozish
-    // Admin qoʻshgan filiallarni yuklab, roʻyxatga qoʻshamiz
-    api.getBranches()
-      .then((rows) => setAdminBranches(rows.map((b) => ({ ...b, img: b.image }))))
-      .catch(() => {})
+    // Admin qoʻshgan filiallar va statik filiallar ustamasini yuklaymiz
+    api.getBranches().then(setAdminBranches).catch(() => {})
+    api.getOverrides().then(setOverrides).catch(() => {})
   }, [])
 
   useEffect(() => {

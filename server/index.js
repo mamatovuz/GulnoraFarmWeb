@@ -156,10 +156,77 @@ app.post('/api/branches', auth, upload.single('image'), (req, res) => {
     .run({ ...b, hours: b.hours || '08:00 – 24:00', region: b.region || 'andijon', image: file })
   res.json({ id: 'db' + info.lastInsertRowid })
 })
+app.put('/api/branches/:id', auth, upload.single('image'), (req, res) => {
+  const id = String(req.params.id).replace(/^db/, '')
+  const row = db.prepare('SELECT * FROM branches WHERE id = ?').get(id)
+  if (!row) return res.status(404).json({ error: 'Filial topilmadi' })
+  const b = {}
+  for (const f of BRANCH_FIELDS) b[f] = (req.body[f] || '').trim()
+  if (!b.name) return res.status(400).json({ error: 'Filial nomi kiritilmadi' })
+  if (b.status !== 'coming_soon') b.status = 'open'
+  b.opening_date = b.status === 'coming_soon' ? b.opening_date || null : null
+  let image = row.image
+  if (req.file) {
+    if (row.image) { const p = path.join(UPLOADS_DIR, row.image); fs.existsSync(p) && fs.unlink(p, () => {}) }
+    image = req.file.filename
+  }
+  db.prepare(
+    `UPDATE branches SET name=@name, addr=@addr, near=@near, hours=@hours, phone=@phone,
+      lat=@lat, lon=@lon, region=@region, status=@status, opening_date=@opening_date, image=@image WHERE id=@id`,
+  ).run({ ...b, hours: b.hours || '08:00 – 24:00', region: b.region || 'andijon', image, id })
+  res.json({ ok: true })
+})
 app.delete('/api/branches/:id', auth, (req, res) => {
   const id = String(req.params.id).replace(/^db/, '')
   removeRowImage('branches', id)
   db.prepare('DELETE FROM branches WHERE id = ?').run(id)
+  res.json({ ok: true })
+})
+
+/* ---------- Statik filiallar ustamasi (tahrirlash / yashirish) ---------- */
+app.get('/api/branch-overrides', (req, res) => {
+  const rows = db.prepare('SELECT * FROM branch_overrides').all()
+  res.json(rows.map((r) => ({ ...r, image: imgUrl(r.image), hidden: !!r.hidden })))
+})
+app.put('/api/branch-overrides/:id', auth, upload.single('image'), (req, res) => {
+  const branchId = String(req.params.id)
+  const b = {}
+  for (const f of BRANCH_FIELDS) b[f] = (req.body[f] || '').trim()
+  if (!b.name) return res.status(400).json({ error: 'Filial nomi kiritilmadi' })
+  if (b.status !== 'coming_soon') b.status = 'open'
+  b.opening_date = b.status === 'coming_soon' ? b.opening_date || null : null
+  const existing = db.prepare('SELECT image FROM branch_overrides WHERE branch_id = ?').get(branchId)
+  let image = existing ? existing.image : ''
+  if (req.file) {
+    if (existing && existing.image) { const p = path.join(UPLOADS_DIR, existing.image); fs.existsSync(p) && fs.unlink(p, () => {}) }
+    image = req.file.filename
+  }
+  db.prepare(
+    `INSERT INTO branch_overrides
+       (branch_id, name, addr, near, hours, phone, lat, lon, region, status, opening_date, image, hidden, updated_at)
+     VALUES (@branch_id,@name,@addr,@near,@hours,@phone,@lat,@lon,@region,@status,@opening_date,@image,0,strftime('%s','now'))
+     ON CONFLICT(branch_id) DO UPDATE SET
+       name=@name, addr=@addr, near=@near, hours=@hours, phone=@phone, lat=@lat, lon=@lon,
+       region=@region, status=@status, opening_date=@opening_date, image=@image, hidden=0, updated_at=strftime('%s','now')`,
+  ).run({ ...b, branch_id: branchId, image })
+  res.json({ ok: true })
+})
+// Statik filialni yashirish (oʻchirish)
+app.post('/api/branch-overrides/:id/hide', auth, (req, res) => {
+  const branchId = String(req.params.id)
+  db.prepare(
+    `INSERT INTO branch_overrides (branch_id, hidden, updated_at)
+     VALUES (?, 1, strftime('%s','now'))
+     ON CONFLICT(branch_id) DO UPDATE SET hidden=1, updated_at=strftime('%s','now')`,
+  ).run(branchId)
+  res.json({ ok: true })
+})
+// Ustamani butunlay olib tashlash (asl holatga qaytarish)
+app.post('/api/branch-overrides/:id/restore', auth, (req, res) => {
+  const branchId = String(req.params.id)
+  const row = db.prepare('SELECT image FROM branch_overrides WHERE branch_id = ?').get(branchId)
+  if (row && row.image) { const p = path.join(UPLOADS_DIR, row.image); fs.existsSync(p) && fs.unlink(p, () => {}) }
+  db.prepare('DELETE FROM branch_overrides WHERE branch_id = ?').run(branchId)
   res.json({ ok: true })
 })
 

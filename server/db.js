@@ -54,6 +54,25 @@ db.exec(`
     ts         INTEGER DEFAULT (strftime('%s','now'))
   );
   CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits(ts);
+
+  -- data.js dagi statik filiallarni tahrirlash/oʻchirish uchun ustama (override).
+  -- branch_id — statik filial IDsi (br1, br2, ...). hidden=1 boʻlsa filial yashiriladi.
+  CREATE TABLE IF NOT EXISTS branch_overrides (
+    branch_id    TEXT PRIMARY KEY,
+    name         TEXT,
+    addr         TEXT,
+    near         TEXT,
+    hours        TEXT,
+    phone        TEXT,
+    lat          TEXT,
+    lon          TEXT,
+    region       TEXT,
+    status       TEXT,
+    opening_date TEXT,
+    image        TEXT DEFAULT '',
+    hidden       INTEGER DEFAULT 0,
+    updated_at   INTEGER DEFAULT (strftime('%s','now'))
+  );
 `)
 
 export default db
