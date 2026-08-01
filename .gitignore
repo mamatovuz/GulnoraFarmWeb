@@ -7,3 +7,6 @@ dist-ssr
 .env.*.local
 .DS_Store
 .vite
+
+# Backend ma'lumotlar bazasi va yuklangan rasmlar (Railway volume)
+/data

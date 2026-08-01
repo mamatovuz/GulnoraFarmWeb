@@ -1,0 +1,6 @@
+# Railway (Nixpacks) — build va ishga tushirish bosqichlari
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"

@@ -6,6 +6,9 @@ import BranchMap from './components/BranchMap.jsx'
 import CountUp from './components/CountUp.jsx'
 import Testimonials from './components/Testimonials.jsx'
 import FloatingUI from './components/FloatingUI.jsx'
+import Partners from './components/Partners.jsx'
+import NewsBell from './components/NewsBell.jsx'
+import { api, trackVisit } from './api.js'
 import {
   Pin, Phone, Telegram, Instagram, Shield, Check, Gear, Users,
   Pill, Heart, Activity, Chat, Clock, Info, Navigate, Menu, Close
@@ -58,13 +61,20 @@ export default function App() {
   const [lang, setLang] = useState('uz')
   const [menuOpen, setMenuOpen] = useState(false)
   const [ready, setReady] = useState(false)
+  const [adminBranches, setAdminBranches] = useState([])
 
   const t = TR[lang]
-  const branches = withBranchUrls(t.branches)
+  // Statik filiallar + admin paneldan qoʻshilganlar
+  const branches = withBranchUrls([...t.branches, ...adminBranches])
 
   // Scroll-reveal — faqat mount boʻlgandan keyin yoqiladi
   useEffect(() => {
     setReady(true)
+    trackVisit() // tashrifni statistikaga yozish
+    // Admin qoʻshgan filiallarni yuklab, roʻyxatga qoʻshamiz
+    api.getBranches()
+      .then((rows) => setAdminBranches(rows.map((b) => ({ ...b, img: b.image }))))
+      .catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -114,6 +124,7 @@ export default function App() {
       <Services t={t} />
       <Branches t={t} branches={branches} />
       <Testimonials t={t} />
+      <Partners t={t} />
       <Vacancy t={t} />
       <Contact t={t} lang={lang} />
       <Footer t={t} />
@@ -159,6 +170,7 @@ function Header({ t, lang, setLang, menuOpen, setMenuOpen, closeMenu }) {
           ))}
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <NewsBell t={t} />
           <div className="gf-social-desk" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <a href={TELEGRAM} target="_blank" rel="noopener" aria-label="Telegram" className="gf-well" style={iconBtn}><Telegram size={19} /></a>
             <a href={INSTAGRAM} target="_blank" rel="noopener" aria-label="Instagram" className="gf-well" style={iconBtn}><Instagram size={18} /></a>

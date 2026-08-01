@@ -165,6 +165,11 @@ export const TR = {
     footTagline: 'Gulnora Farm — Andijon viloyati boʻylab ishonchli dorixonalar tarmogʻi.',
     footRights: 'Barcha huquqlar himoyalangan.', footMade: 'Sevgi bilan tayyorlangan',
 
+    // Hamkorlar va yangiliklar
+    partnersEyebrow: 'Hamkorlik', partnersTitle: 'Hamkorlarimiz',
+    partnersSub: 'Bizga ishongan brend va tashkilotlar',
+    newsTitle: 'Yangiliklar', newsEmpty: 'Hozircha yangiliklar yoʻq', newsClose: 'Yopish',
+
     // Filial qidiruv / xarita
     regions: { all: 'Barchasi', andijon: 'Andijon shahri', asaka: 'Asaka', qurgontepa: 'Qoʻrgʻontepa', xojaobod: 'Xoʻjaobod', paytug: 'Paytugʻ' },
     searchPlaceholder: 'Filial yoki manzil boʻyicha qidiring…',
@@ -231,6 +236,11 @@ export const TR = {
     footTagline: 'Gulnora Farm — надёжная сеть аптек в Андижанской области.',
     footRights: 'Все права защищены.', footMade: 'Сделано с любовью',
 
+    // Партнёры и новости
+    partnersEyebrow: 'Партнёрство', partnersTitle: 'Наши партнёры',
+    partnersSub: 'Бренды и организации, которые нам доверяют',
+    newsTitle: 'Новости', newsEmpty: 'Пока новостей нет', newsClose: 'Закрыть',
+
     // Поиск филиалов / карта
     regions: { all: 'Все', andijon: 'Андижан', asaka: 'Асака', qurgontepa: 'Кургантепа', xojaobod: 'Ходжаабад', paytug: 'Пайтуг' },
     searchPlaceholder: 'Поиск по филиалу или адресу…',
@@ -275,9 +285,10 @@ export function withBranchUrls(branches) {
       routeUrl,
       lat: parseFloat(b.lat),
       lon: parseFloat(b.lon),
-      region: BRANCH_REGION[b.id] || 'andijon',
+      region: b.region || BRANCH_REGION[b.id] || 'andijon',
       tel: (b.phone || '').replace(/[^\d+]/g, ''),
-      img: BRANCH_IMAGES[b.id] || '', // filial fotosi (yuqoridagi BRANCH_IMAGES dan)
+      // Admin qoʻshgan filialda oʻz rasmi (b.img) boʻladi; aks holda BRANCH_IMAGES dan
+      img: b.img || BRANCH_IMAGES[b.id] || '',
       status: b.status || 'open',
       opening_date: b.opening_date || null,
       daysUntilOpen: b.status === 'coming_soon' ? daysUntilOpening(b.opening_date) : null

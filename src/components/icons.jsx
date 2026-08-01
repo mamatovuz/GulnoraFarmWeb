@@ -106,3 +106,40 @@ export const Close = ({ size = 22, ...p }) => (
     <path d="M6 6l12 12M18 6L6 18" />
   </svg>
 )
+
+export const Bell = ({ size = 20, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" />
+  </svg>
+)
+
+export const Plus = ({ size = 20, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+)
+
+export const Trash = ({ size = 18, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M10 11v6M14 11v6" />
+  </svg>
+)
+
+export const Chart = ({ size = 20, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M3 3v18h18" /><path d="M7 15l3-3 3 3 5-6" />
+  </svg>
+)
+
+export const Logout = ({ size = 18, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" />
+  </svg>
+)
+
+export const Handshake = ({ size = 22, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M11 17l2 2a1.5 1.5 0 0 0 2-2l-1-1" /><path d="M14 14l1.5 1.5a1.5 1.5 0 0 0 2-2L14 10l-2-2-4 1-3-1" />
+    <path d="M6 6L2 7v6l3 3" /><path d="M22 13V7l-4-1-4 2" />
+  </svg>
+)

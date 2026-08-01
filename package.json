@@ -6,11 +6,17 @@
   "description": "Gulnora Farm — Andijon viloyati boʻylab dorixonalar tarmogʻi rasmiy veb-sayti",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
     "build": "vite build",
+    "start": "node server/index.js",
     "preview": "vite preview"
   },
   "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
+    "multer": "^2.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
