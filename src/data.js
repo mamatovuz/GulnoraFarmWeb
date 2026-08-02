@@ -169,6 +169,19 @@ export const TR = {
     partnersEyebrow: 'Hamkorlik', partnersTitle: 'Hamkorlarimiz',
     partnersSub: 'Bizga ishongan brend va tashkilotlar',
     newsTitle: 'Yangiliklar', newsEmpty: 'Hozircha yangiliklar yoʻq', newsClose: 'Yopish',
+    newsBack: 'Bosh sahifa', newsPageTitle: 'Yangiliklar',
+    newsPageSub: 'Gulnora Farm hayotidan soʻnggi eʼlonlar va yangiliklar',
+
+    // Sharh qoldirish (baholash) oynasi
+    rvPromptTitle: 'Gulnora Farm sizga yoqdimi?',
+    rvPromptSub: 'Bir necha soniya ajrating — fikringiz biz uchun juda muhim.',
+    rvRatingLabel: 'Bahoyingiz',
+    rvName: 'Ism familiyangiz', rvCity: 'Shahringiz (ixtiyoriy)',
+    rvText: 'Nima uchun shunday baholadingiz?',
+    rvSubmit: 'Yuborish', rvSending: 'Yuborilmoqda…',
+    rvThanks: 'Rahmat! Sharhingiz koʻrib chiqilgach eʼlon qilinadi.',
+    rvErrRating: 'Iltimos, yulduzcha bilan baho bering.',
+    rvLater: 'Keyinroq', rvClose: 'Yopish',
 
     // Filial qidiruv / xarita
     regions: { all: 'Barchasi', andijon: 'Andijon shahri', asaka: 'Asaka', qurgontepa: 'Qoʻrgʻontepa', xojaobod: 'Xoʻjaobod', paytug: 'Paytugʻ',chinabod: 'Chinabod' },
@@ -240,6 +253,19 @@ export const TR = {
     partnersEyebrow: 'Партнёрство', partnersTitle: 'Наши партнёры',
     partnersSub: 'Бренды и организации, которые нам доверяют',
     newsTitle: 'Новости', newsEmpty: 'Пока новостей нет', newsClose: 'Закрыть',
+    newsBack: 'На главную', newsPageTitle: 'Новости',
+    newsPageSub: 'Последние новости и объявления из жизни Gulnora Farm',
+
+    // Окно отзыва (оценки)
+    rvPromptTitle: 'Как вам Gulnora Farm?',
+    rvPromptSub: 'Уделите пару секунд — ваше мнение очень важно для нас.',
+    rvRatingLabel: 'Ваша оценка',
+    rvName: 'Ваше имя и фамилия', rvCity: 'Ваш город (необязательно)',
+    rvText: 'Почему вы поставили такую оценку?',
+    rvSubmit: 'Отправить', rvSending: 'Отправка…',
+    rvThanks: 'Спасибо! Ваш отзыв будет опубликован после проверки.',
+    rvErrRating: 'Пожалуйста, поставьте оценку звёздами.',
+    rvLater: 'Позже', rvClose: 'Закрыть',
 
     // Поиск филиалов / карта
     regions: { all: 'Все', andijon: 'Андижан', asaka: 'Асака', qurgontepa: 'Кургантепа', xojaobod: 'Ходжаабад', paytug: 'Пайтуг' },

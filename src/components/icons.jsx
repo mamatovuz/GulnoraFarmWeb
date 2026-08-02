@@ -137,6 +137,18 @@ export const Logout = ({ size = 18, ...p }) => (
   </svg>
 )
 
+export const Star = ({ size = 20, filled = false, color = '#4f4f4f', empty = '#dedede', ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : empty} {...p}>
+    <path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" />
+  </svg>
+)
+
+export const ArrowLeft = ({ size = 20, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+  </svg>
+)
+
 export const Handshake = ({ size = 22, ...p }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" {...S} {...p}>
     <path d="M11 17l2 2a1.5 1.5 0 0 0 2-2l-1-1" /><path d="M14 14l1.5 1.5a1.5 1.5 0 0 0 2-2L14 10l-2-2-4 1-3-1" />

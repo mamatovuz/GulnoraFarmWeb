@@ -39,7 +39,15 @@ export const api = {
   // Hududlar (filial filtri chiplari)
   getRegions: () => req('/api/regions'),
   addRegion: (name, name_ru) => req('/api/regions', { method: 'POST', auth: true, body: { name, name_ru } }),
+  editRegion: (key, name, name_ru) => req('/api/regions/' + key, { method: 'PUT', auth: true, body: { name, name_ru } }),
   delRegion: (key) => req('/api/regions/' + key, { method: 'DELETE', auth: true }),
+
+  // Mijozlar sharhlari
+  getFeaturedReviews: () => req('/api/reviews/featured'),
+  submitReview: (data) => req('/api/reviews', { method: 'POST', body: data }),
+  getReviews: () => req('/api/reviews', { auth: true }),
+  updateReview: (id, data) => req('/api/reviews/' + id, { method: 'PUT', auth: true, body: data }),
+  delReview: (id) => req('/api/reviews/' + id, { method: 'DELETE', auth: true }),
 
   // Statik (data.js) filiallar ustamasi — tahrirlash / yashirish / tiklash
   getOverrides: () => req('/api/branch-overrides'),

@@ -67,6 +67,23 @@ db.exec(`
     created_at INTEGER DEFAULT (strftime('%s','now'))
   );
 
+  -- Mijozlar sharhlari. status: pending | approved | rejected.
+  -- featured=1 boʻlgan (koʻpi 4 ta) sharhlar bosh sahifada "Mijozlar fikri"da chiqadi.
+  CREATE TABLE IF NOT EXISTS reviews (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT NOT NULL,
+    city       TEXT DEFAULT '',
+    rating     INTEGER DEFAULT 5,
+    text       TEXT NOT NULL,
+    name_ru    TEXT DEFAULT '',
+    city_ru    TEXT DEFAULT '',
+    text_ru    TEXT DEFAULT '',
+    status     TEXT DEFAULT 'pending',
+    featured   INTEGER DEFAULT 0,
+    sort       INTEGER DEFAULT 0,
+    created_at INTEGER DEFAULT (strftime('%s','now'))
+  );
+
   -- data.js dagi statik filiallarni tahrirlash/o'chirish uchun ustama (override).
   -- branch_id — statik filial IDsi (br1, br2, ...). hidden=1 boʻlsa filial yashiriladi.
   CREATE TABLE IF NOT EXISTS branch_overrides (
@@ -99,6 +116,29 @@ for (const table of ['branches', 'branch_overrides']) {
   ensureColumn(table, 'name_ru')
   ensureColumn(table, 'addr_ru')
   ensureColumn(table, 'near_ru')
+}
+// Eski bazalarda reviews jadvaliga yetishmayotgan ustunlar
+for (const col of ['name_ru', 'city_ru', 'text_ru']) ensureColumn('reviews', col)
+ensureColumn('reviews', 'status', "TEXT DEFAULT 'pending'")
+ensureColumn('reviews', 'featured', 'INTEGER DEFAULT 0')
+ensureColumn('reviews', 'sort', 'INTEGER DEFAULT 0')
+
+// Boshlangʻich (data.js dagi) sharhlar — bazaga bir marta, tasdiqlangan va
+// bosh sahifada koʻrinadigan (featured) qilib yoziladi. Admin keyin ularni
+// oʻchirishi yoki oʻrniga mijoz sharhlarini qoʻyishi mumkin.
+const reviewCount = db.prepare('SELECT COUNT(*) n FROM reviews').get().n
+if (reviewCount === 0) {
+  const seed = [
+    { name: 'Dilnoza R.', city: 'Andijon', rating: 5, text: 'Har doim kerakli dorini shu yerdan topaman. Farmatsevtlar juda xushmuomala va bilimli. Rahmat, Gulnora Farm!', name_ru: 'Дилноза Р.', city_ru: 'Андижан', text_ru: 'Всегда нахожу здесь нужное лекарство. Фармацевты очень вежливые и знающие. Спасибо, Gulnora Farm!' },
+    { name: 'Aziz M.', city: 'Asaka', rating: 5, text: 'Narxlari qulay, mahsulotlar original. Uyimga eng yaqin filial boʻlgani uchun doim shu yerdan olaman.', name_ru: 'Азиз М.', city_ru: 'Асака', text_ru: 'Цены доступные, товары оригинальные. Беру всегда здесь — ближайший филиал к дому.' },
+    { name: 'Sevara T.', city: 'Andijon', rating: 5, text: 'Telegram bot orqali dori borligini tekshirib, borib oldim. Juda qulay xizmat, vaqtni tejadim.', name_ru: 'Севара Т.', city_ru: 'Андижан', text_ru: 'Проверила наличие через Telegram-бот и забрала. Очень удобно, сэкономила время.' },
+    { name: 'Jasur K.', city: 'Xoʻjaobod', rating: 5, text: 'Tunda ham ochiq filiali borligi juda yordam berdi. Bolam kasal boʻlganda qutqardi.', name_ru: 'Жасур К.', city_ru: 'Ходжаабад', text_ru: 'Круглосуточный филиал очень выручил, когда ночью заболел ребёнок.' },
+  ]
+  const stmt = db.prepare(
+    `INSERT INTO reviews (name, city, rating, text, name_ru, city_ru, text_ru, status, featured, sort)
+     VALUES (@name,@city,@rating,@text,@name_ru,@city_ru,@text_ru,'approved',1,@sort)`,
+  )
+  seed.forEach((r, i) => stmt.run({ ...r, sort: i }))
 }
 
 export default db

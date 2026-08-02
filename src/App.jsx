@@ -8,6 +8,7 @@ import Testimonials from './components/Testimonials.jsx'
 import FloatingUI from './components/FloatingUI.jsx'
 import Partners from './components/Partners.jsx'
 import NewsBell from './components/NewsBell.jsx'
+import ReviewPrompt from './components/ReviewPrompt.jsx'
 import { api, trackVisit } from './api.js'
 import {
   Pin, Phone, Telegram, Instagram, Shield, Check, Gear, Users,
@@ -58,7 +59,7 @@ const dot = (size, bg) => ({
 })
 
 export default function App() {
-  const [lang, setLang] = useState('uz')
+  const [lang, setLang] = useState(() => localStorage.getItem('gf_lang') || 'uz')
   const [menuOpen, setMenuOpen] = useState(false)
   const [ready, setReady] = useState(false)
   const [adminBranches, setAdminBranches] = useState([])
@@ -73,6 +74,9 @@ export default function App() {
     () => buildRegionLabels(adminRegions, lang, t.regions.all),
     [adminRegions, lang, t.regions.all],
   )
+
+  // Tanlangan tilni saqlaymiz (yangiliklar sahifasi bilan bir xil boʻlishi uchun)
+  useEffect(() => { localStorage.setItem('gf_lang', lang) }, [lang])
 
   // Scroll-reveal — faqat mount boʻlgandan keyin yoqiladi
   useEffect(() => {
@@ -130,12 +134,13 @@ export default function App() {
       <About t={t} />
       <Services t={t} />
       <Branches t={t} branches={branches} regionLabels={regionLabels} />
-      <Testimonials t={t} />
+      <Testimonials t={t} lang={lang} />
       <Partners t={t} />
       <Vacancy t={t} />
       <Contact t={t} lang={lang} />
       <Footer t={t} />
       <FloatingUI />
+      <ReviewPrompt t={t} />
     </div>
   )
 }

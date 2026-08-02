@@ -155,8 +155,65 @@ app.post('/api/regions', auth, (req, res) => {
   db.prepare('INSERT INTO regions (key, name, name_ru) VALUES (?, ?, ?)').run(key, name, name_ru)
   res.json({ key, name, name_ru })
 })
+app.put('/api/regions/:key', auth, (req, res) => {
+  const name = (req.body.name || '').trim()
+  const name_ru = (req.body.name_ru || '').trim()
+  if (!name) return res.status(400).json({ error: 'Hudud nomini kiriting' })
+  const row = db.prepare('SELECT 1 FROM regions WHERE key = ?').get(req.params.key)
+  if (!row) return res.status(404).json({ error: 'Hudud topilmadi' })
+  db.prepare('UPDATE regions SET name = ?, name_ru = ? WHERE key = ?').run(name, name_ru, req.params.key)
+  res.json({ key: req.params.key, name, name_ru })
+})
 app.delete('/api/regions/:key', auth, (req, res) => {
   db.prepare('DELETE FROM regions WHERE key = ?').run(req.params.key)
+  res.json({ ok: true })
+})
+
+/* ---------- Mijozlar sharhlari ---------- */
+const MAX_FEATURED = 4
+// Bosh sahifada koʻrinadigan (tasdiqlangan + featured) sharhlar
+app.get('/api/reviews/featured', (req, res) => {
+  const rows = db
+    .prepare(`SELECT * FROM reviews WHERE status='approved' AND featured=1 ORDER BY sort ASC, id ASC LIMIT ${MAX_FEATURED}`)
+    .all()
+  res.json(rows)
+})
+// Yangi sharh — moderatsiyaga (pending) tushadi
+app.post('/api/reviews', (req, res) => {
+  const name = String((req.body && req.body.name) || '').trim().slice(0, 80)
+  const city = String((req.body && req.body.city) || '').trim().slice(0, 80)
+  const text = String((req.body && req.body.text) || '').trim().slice(0, 1000)
+  let rating = parseInt((req.body && req.body.rating) || 0, 10)
+  if (!Number.isFinite(rating) || rating < 1 || rating > 5) rating = 5
+  if (!name) return res.status(400).json({ error: 'Ismingizni kiriting' })
+  if (!text) return res.status(400).json({ error: 'Sharh matnini kiriting' })
+  db.prepare('INSERT INTO reviews (name, city, rating, text, status) VALUES (?, ?, ?, ?, ?)').run(name, city, rating, text, 'pending')
+  res.json({ ok: true })
+})
+// Admin — barcha sharhlar
+app.get('/api/reviews', auth, (req, res) => {
+  const rows = db.prepare('SELECT * FROM reviews ORDER BY featured DESC, sort ASC, id DESC').all()
+  res.json(rows)
+})
+// Admin — status/featured oʻzgartirish
+app.put('/api/reviews/:id', auth, (req, res) => {
+  const row = db.prepare('SELECT * FROM reviews WHERE id = ?').get(req.params.id)
+  if (!row) return res.status(404).json({ error: 'Sharh topilmadi' })
+  let status = row.status
+  let featured = row.featured
+  if (req.body.status && ['pending', 'approved', 'rejected'].includes(req.body.status)) status = req.body.status
+  if (req.body.featured != null) featured = req.body.featured ? 1 : 0
+  // featured faqat tasdiqlangan sharhda va koʻpi 4 ta boʻlishi mumkin
+  if (featured && status !== 'approved') status = 'approved'
+  if (featured && !row.featured) {
+    const n = db.prepare("SELECT COUNT(*) n FROM reviews WHERE featured=1 AND status='approved'").get().n
+    if (n >= MAX_FEATURED) return res.status(400).json({ error: `Koʻpi bilan ${MAX_FEATURED} ta sharhni tanlash mumkin. Avval boshqasini olib tashlang.` })
+  }
+  db.prepare('UPDATE reviews SET status = ?, featured = ? WHERE id = ?').run(status, featured, req.params.id)
+  res.json({ ok: true })
+})
+app.delete('/api/reviews/:id', auth, (req, res) => {
+  db.prepare('DELETE FROM reviews WHERE id = ?').run(req.params.id)
   res.json({ ok: true })
 })
 

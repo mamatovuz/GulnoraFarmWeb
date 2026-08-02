@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { api, getToken, setToken, clearToken } from '../api.js'
 import { TR, BASE_REGIONS } from '../data.js'
 import Logo from '../components/Logo.jsx'
-import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close } from '../components/icons.jsx'
+import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close, Star, Chat, Check } from '../components/icons.jsx'
 
 const INK = '#262626', BODY = '#565656', MUTED = '#6b6b6b', LINE = '#e4e4e4'
 const DISPLAY = "'Quicksand', sans-serif"
@@ -66,6 +66,7 @@ const TABS = [
   { key: 'stats', label: 'Statistika', icon: Chart },
   { key: 'partners', label: 'Hamkorlar', icon: Handshake },
   { key: 'news', label: 'Yangiliklar', icon: Bell },
+  { key: 'reviews', label: 'Sharxlar', icon: Chat },
   { key: 'branches', label: 'Filiallar', icon: Pin },
   { key: 'regions', label: 'Hududlar', icon: Pin },
 ]
@@ -99,6 +100,7 @@ function Dashboard({ onLogout }) {
           {tab === 'stats' && <StatsPanel />}
           {tab === 'partners' && <PartnersPanel />}
           {tab === 'news' && <NewsPanel />}
+          {tab === 'reviews' && <ReviewsPanel />}
           {tab === 'branches' && <BranchesPanel />}
           {tab === 'regions' && <RegionsPanel />}
         </main>
@@ -459,6 +461,113 @@ function BranchForm({ state, onClose, onSaved, regionOpts = BASE_REGION_OPTS }) 
   )
 }
 
+/* ---------- SHARXLAR (mijozlar fikri) ---------- */
+const MAX_FEATURED = 4
+function AdminStars({ n }) {
+  return (
+    <div style={{ display: 'flex', gap: 1 }}>
+      {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={15} filled={i <= n} color="#f2b01e" empty="#e0e0e0" />)}
+    </div>
+  )
+}
+function ReviewsPanel() {
+  const [items, setItems] = useState([])
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(0) // ishlov berilayotgan id
+  useAuthGuard(err)
+
+  const load = () => api.getReviews().then(setItems).catch((e) => setErr(e.message))
+  useEffect(() => { load() }, [])
+
+  const act = async (id, data) => {
+    setErr(''); setBusy(id)
+    try { await api.updateReview(id, data); await load() }
+    catch (e) { setErr(e.message) } finally { setBusy(0) }
+  }
+  const del = async (id) => { if (!confirmDel()) return; setErr(''); try { await api.delReview(id); load() } catch (e) { setErr(e.message) } }
+
+  const pending = items.filter((r) => r.status === 'pending')
+  const approved = items.filter((r) => r.status === 'approved')
+  const rejected = items.filter((r) => r.status === 'rejected')
+  const featuredCount = approved.filter((r) => r.featured).length
+
+  const ReviewCard = ({ r, children }) => (
+    <div style={{ ...card, padding: 16, display: 'flex', gap: 14, alignItems: 'flex-start', borderColor: r.featured ? '#e7c96b' : LINE, background: r.featured ? '#fffdf5' : '#fff' }}>
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <AdminStars n={r.rating} />
+          <span style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{r.name}</span>
+          {r.city && <span style={{ fontSize: 12.5, color: MUTED }}>· {r.city}</span>}
+          {r.featured && <Tag text="saytda" c="#8a6d1a" bg="#fbf1cf" />}
+        </div>
+        <div style={{ fontSize: 13.5, color: BODY, marginTop: 8, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{r.text}</div>
+        <div style={{ fontSize: 11.5, color: '#b0b0b0', marginTop: 8 }}>{new Date(r.created_at * 1000).toLocaleString('uz-UZ')}</div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 'none' }}>{children}</div>
+    </div>
+  )
+
+  return (
+    <div>
+      <PanelHead title="Sharxlar" sub={`Yangi sharhlar shu yerda tasdiqlanadi. Saytda koʻpi bilan ${MAX_FEATURED} ta sharh koʻrsatiladi.`} />
+      {err && <ErrorBox msg={err} />}
+
+      {/* Moderatsiya — yangi sharhlar */}
+      <GroupLabel text={`🕒 Moderatsiyada (${pending.length})`} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {pending.map((r) => (
+          <ReviewCard key={r.id} r={r}>
+            <button onClick={() => act(r.id, { status: 'approved' })} disabled={busy === r.id} style={{ ...btn, padding: '8px 14px', background: '#edf2ee', color: '#35604a' }}><Check size={16} color="#35604a" /> Tasdiqlash</button>
+            <button onClick={() => act(r.id, { status: 'rejected' })} disabled={busy === r.id} style={{ ...btn, padding: '8px 14px', background: '#f0f0f0', color: BODY }}>Rad etish</button>
+            <button onClick={() => del(r.id)} title="Oʻchirish" style={delIconBtn}><Trash size={15} /></button>
+          </ReviewCard>
+        ))}
+        {pending.length === 0 && <Empty text="Yangi sharhlar yoʻq" />}
+      </div>
+
+      {/* Tasdiqlangan — saytda koʻrsatishni tanlash (galichka) */}
+      <GroupLabel text={`⭐ Tasdiqlangan sharhlar — saytda: ${featuredCount} / ${MAX_FEATURED}`} />
+      <div style={{ fontSize: 12.5, color: MUTED, marginBottom: 10 }}>
+        Belgilangan (galichkali) sharhlar bosh sahifadagi «Mijozlar fikri» boʻlimida koʻrinadi. Birini olib, oʻrniga boshqasini belgilashingiz mumkin.
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {approved.map((r) => {
+          const disabledFeature = !r.featured && featuredCount >= MAX_FEATURED
+          return (
+            <ReviewCard key={r.id} r={r}>
+              <button
+                onClick={() => act(r.id, { featured: r.featured ? 0 : 1 })}
+                disabled={busy === r.id || disabledFeature}
+                title={disabledFeature ? `Avval boshqa sharhni oling (${MAX_FEATURED} tadan koʻp boʻlmaydi)` : ''}
+                style={{ ...btn, padding: '8px 14px', background: r.featured ? 'linear-gradient(180deg,#5a5a5a,#3f3f3f)' : '#f0f0f0', color: r.featured ? '#fff' : (disabledFeature ? '#b5b5b5' : INK), cursor: disabledFeature ? 'not-allowed' : 'pointer' }}>
+                {r.featured ? <><Check size={16} color="#fff" /> Saytda</> : 'Saytga qoʻyish'}
+              </button>
+              <button onClick={() => del(r.id)} title="Oʻchirish" style={delIconBtn}><Trash size={15} /></button>
+            </ReviewCard>
+          )
+        })}
+        {approved.length === 0 && <Empty text="Tasdiqlangan sharhlar yoʻq" />}
+      </div>
+
+      {/* Rad etilganlar */}
+      {rejected.length > 0 && (
+        <>
+          <GroupLabel text={`🚫 Rad etilgan (${rejected.length})`} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {rejected.map((r) => (
+              <ReviewCard key={r.id} r={r}>
+                <button onClick={() => act(r.id, { status: 'approved' })} disabled={busy === r.id} style={{ ...btn, padding: '8px 14px', background: '#edf2ee', color: '#35604a' }}>Tiklash</button>
+                <button onClick={() => del(r.id)} title="Oʻchirish" style={delIconBtn}><Trash size={15} /></button>
+              </ReviewCard>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+const delIconBtn = { width: 36, height: 36, borderRadius: 10, border: '1px solid #ecd5d1', background: '#fbf1ef', color: '#a4483c', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }
+
 /* ---------- HUDUDLAR ---------- */
 function RegionsPanel() {
   const [items, setItems] = useState([])
@@ -466,6 +575,7 @@ function RegionsPanel() {
   const [nameRu, setNameRu] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [edit, setEdit] = useState(null) // { key, name, name_ru }
   useAuthGuard(err)
 
   const load = () => api.getRegions().then(setItems).catch((e) => setErr(e.message))
@@ -477,6 +587,12 @@ function RegionsPanel() {
     setBusy(true)
     try { await api.addRegion(name.trim(), nameRu.trim()); setName(''); setNameRu(''); load() }
     catch (e) { setErr(e.message) } finally { setBusy(false) }
+  }
+  const save = async () => {
+    if (!edit.name.trim()) { setErr('Hudud nomini kiriting'); return }
+    setErr('')
+    try { await api.editRegion(edit.key, edit.name.trim(), edit.name_ru.trim()); setEdit(null); load() }
+    catch (e) { setErr(e.message) }
   }
   const del = async (key) => { if (!confirmDel()) return; try { await api.delRegion(key); load() } catch (e) { setErr(e.message) } }
 
@@ -503,13 +619,27 @@ function RegionsPanel() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {items.map((r) => (
-          <div key={r.key} style={{ ...card, padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{r.name}</div>
-              <div style={{ fontSize: 12.5, color: MUTED, marginTop: 2 }}>{r.name_ru ? 'RU: ' + r.name_ru : 'ruscha nomi yoʻq'} · <span style={{ color: '#b0b0b0' }}>{r.key}</span></div>
+          edit && edit.key === r.key ? (
+            <div key={r.key} style={{ ...card, padding: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }} className="gf-form2">
+                <Field label="Hudud nomi (oʻzbekcha) *"><input style={input} value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} autoFocus /></Field>
+                <Field label="Nomi (ruscha)"><input style={input} value={edit.name_ru} onChange={(e) => setEdit({ ...edit, name_ru: e.target.value })} placeholder="Например: Мархаматский район" /></Field>
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                <button onClick={save} style={{ ...btnPrimary, padding: '9px 18px' }}>Saqlash</button>
+                <button onClick={() => setEdit(null)} style={{ ...btn, background: '#f0f0f0', color: INK }}>Bekor qilish</button>
+              </div>
             </div>
-            <button onClick={() => del(r.key)} title="Oʻchirish" style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid #ecd5d1', background: '#fbf1ef', color: '#a4483c', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}><Trash size={16} /></button>
-          </div>
+          ) : (
+            <div key={r.key} style={{ ...card, padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{r.name}</div>
+                <div style={{ fontSize: 12.5, color: MUTED, marginTop: 2 }}>{r.name_ru ? 'RU: ' + r.name_ru : 'ruscha nomi yoʻq'} · <span style={{ color: '#b0b0b0' }}>{r.key}</span></div>
+              </div>
+              <button onClick={() => setEdit({ key: r.key, name: r.name, name_ru: r.name_ru || '' })} style={{ ...btn, padding: '8px 14px', background: '#f0f0f0', color: INK, flex: 'none' }}>Tahrirlash</button>
+              <button onClick={() => del(r.key)} title="Oʻchirish" style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid #ecd5d1', background: '#fbf1ef', color: '#a4483c', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}><Trash size={16} /></button>
+            </div>
+          )
         ))}
         {items.length === 0 && <Empty text="Hozircha admin orqali qoʻshilgan hudud yoʻq" />}
       </div>
