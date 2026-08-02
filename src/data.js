@@ -280,7 +280,29 @@ export const BRANCH_REGION = {
 //  - override bor → tahrirlangan maydonlar ustma-ust qoʻyiladi (rasm ham)
 //  - admin qoʻshgan filiallar roʻyxat oxiriga qoʻshiladi
 const OVERRIDE_FIELDS = ['name', 'addr', 'near', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
-export function applyBranchData(staticBranches, overrides = [], adminBranches = []) {
+// Tilga bogʻliq maydonlar: RU tanlansa _ru varianti ishlatiladi (boʻsh boʻlsa UZ ga qaytadi)
+const TRANSLATABLE = { name: 'name_ru', addr: 'addr_ru', near: 'near_ru' }
+// Saytdagi asosiy hududlar (admin qoʻshadiganlari bazadan keladi).
+// key — BRANCH_REGION va filtr bilan mos boʻlishi kerak.
+export const BASE_REGIONS = [
+  { key: 'andijon', name: 'Andijon shahri', name_ru: 'Андижан' },
+  { key: 'asaka', name: 'Asaka', name_ru: 'Асака' },
+  { key: 'qurgontepa', name: 'Qoʻrgʻontepa', name_ru: 'Кургантепа' },
+  { key: 'xojaobod', name: 'Xoʻjaobod', name_ru: 'Ходжаабад' },
+  { key: 'paytug', name: 'Paytugʻ', name_ru: 'Пайтуг' },
+]
+
+// Hudud nomlari xaritasi (til boʻyicha) — asosiy + admin qoʻshgan
+export function buildRegionLabels(adminRegions = [], lang = 'uz', allLabel = 'Barchasi') {
+  const m = { all: allLabel }
+  const pick = (r) => (lang === 'ru' ? r.name_ru || r.name : r.name)
+  BASE_REGIONS.forEach((r) => { m[r.key] = pick(r) })
+  adminRegions.forEach((r) => { m[r.key] = pick(r) })
+  return m
+}
+
+export function applyBranchData(staticBranches, overrides = [], adminBranches = [], lang = 'uz') {
+  const ru = lang === 'ru'
   const map = {}
   overrides.forEach((o) => { map[o.branch_id] = o })
   const out = []
@@ -289,13 +311,27 @@ export function applyBranchData(staticBranches, overrides = [], adminBranches = 
     if (o && o.hidden) continue
     if (o) {
       const patch = {}
-      OVERRIDE_FIELDS.forEach((f) => { if (o[f] != null && o[f] !== '') patch[f] = o[f] })
+      OVERRIDE_FIELDS.forEach((f) => {
+        // RU rejimda tarjima maydoni faqat toʻldirilgan boʻlsa qoʻllanadi;
+        // boʻsh boʻlsa asl (data.js dagi) RU matni saqlanadi
+        const key = ru && TRANSLATABLE[f] ? TRANSLATABLE[f] : f
+        const v = o[key]
+        if (v != null && v !== '') patch[f] = v
+      })
       out.push({ ...b, ...patch, ...(o.image ? { img: o.image } : {}) })
     } else {
       out.push(b)
     }
   }
-  adminBranches.forEach((b) => out.push({ ...b, img: b.image }))
+  adminBranches.forEach((b) => {
+    const nb = { ...b, img: b.image }
+    if (ru) {
+      if (b.name_ru) nb.name = b.name_ru
+      if (b.addr_ru) nb.addr = b.addr_ru
+      if (b.near_ru) nb.near = b.near_ru
+    }
+    out.push(nb)
+  })
   return out
 }
 

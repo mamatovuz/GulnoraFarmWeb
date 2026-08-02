@@ -2,7 +2,7 @@
 // Login: admin@gulnorafarm.uz / 123@Gulnorafarm (server env orqali oʻzgartiriladi).
 import { useEffect, useState } from 'react'
 import { api, getToken, setToken, clearToken } from '../api.js'
-import { TR } from '../data.js'
+import { TR, BASE_REGIONS } from '../data.js'
 import Logo from '../components/Logo.jsx'
 import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close } from '../components/icons.jsx'
 
@@ -67,6 +67,7 @@ const TABS = [
   { key: 'partners', label: 'Hamkorlar', icon: Handshake },
   { key: 'news', label: 'Yangiliklar', icon: Bell },
   { key: 'branches', label: 'Filiallar', icon: Pin },
+  { key: 'regions', label: 'Hududlar', icon: Pin },
 ]
 
 function Dashboard({ onLogout }) {
@@ -99,6 +100,7 @@ function Dashboard({ onLogout }) {
           {tab === 'partners' && <PartnersPanel />}
           {tab === 'news' && <NewsPanel />}
           {tab === 'branches' && <BranchesPanel />}
+          {tab === 'regions' && <RegionsPanel />}
         </main>
       </div>
     </div>
@@ -263,30 +265,34 @@ function NewsPanel() {
 }
 
 /* ---------- FILIALLAR ---------- */
-const REGIONS = [
-  ['andijon', 'Andijon shahri'], ['asaka', 'Asaka'], ['qurgontepa', 'Qoʻrgʻontepa'],
-  ['xojaobod', 'Xoʻjaobod'], ['paytug', 'Paytugʻ'],
-]
-const REGION_LABEL = Object.fromEntries(REGIONS)
-const emptyBranch = { name: '', addr: '', near: '', hours: '08:00 – 24:00', phone: '', lat: '', lon: '', region: 'andijon', status: 'open', opening_date: '' }
-const STATIC_BRANCHES = TR.uz.branches // data.js dagi filiallar (asl matn)
+const BASE_REGION_OPTS = BASE_REGIONS.map((r) => [r.key, r.name]) // [[key, uz-nom], ...]
+const emptyBranch = { name: '', addr: '', near: '', name_ru: '', addr_ru: '', near_ru: '', hours: '08:00 – 24:00', phone: '', lat: '', lon: '', region: 'andijon', status: 'open', opening_date: '' }
+const STATIC_BRANCHES = TR.uz.branches // data.js dagi filiallar (asl UZ matn)
+const STATIC_RU = Object.fromEntries(TR.ru.branches.map((b) => [b.id, b])) // asl RU matn (id boʻyicha)
 const FIELD_KEYS = ['name', 'addr', 'near', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
+const ALL_KEYS = [...FIELD_KEYS, 'name_ru', 'addr_ru', 'near_ru'] // forma toʻliq maydonlari
 
 function BranchesPanel() {
   const [admin, setAdmin] = useState([])
   const [ovr, setOvr] = useState({}) // branch_id -> override
+  const [regions, setRegions] = useState([]) // admin qoʻshgan hududlar
   const [editing, setEditing] = useState(null) // { mode:'new'|'static'|'admin', id, initial, image }
   const [err, setErr] = useState('')
   useAuthGuard(err)
 
   const load = () =>
-    Promise.all([api.getBranches(), api.getOverrides()])
-      .then(([a, o]) => {
+    Promise.all([api.getBranches(), api.getOverrides(), api.getRegions()])
+      .then(([a, o, r]) => {
         setAdmin(a)
         const m = {}; o.forEach((x) => { m[x.branch_id] = x }); setOvr(m)
+        setRegions(r)
       })
       .catch((e) => setErr(e.message))
   useEffect(() => { load() }, [])
+
+  // Hudud tanlovlari (asosiy + admin) va nom xaritasi
+  const regionOpts = [...BASE_REGION_OPTS, ...regions.map((r) => [r.key, r.name])]
+  const REGION_LABEL = Object.fromEntries(regionOpts)
 
   // Statik filiallar (ustama qoʻllangan holda) + admin qoʻshganlari
   const staticRows = STATIC_BRANCHES.map((s) => {
@@ -300,7 +306,14 @@ function BranchesPanel() {
 
   const openNew = () => setEditing({ mode: 'new', id: null, initial: { ...emptyBranch }, image: '' })
   const openEdit = (r) => {
-    const initial = {}; FIELD_KEYS.forEach((k) => { initial[k] = r[k] || '' })
+    const initial = {}; ALL_KEYS.forEach((k) => { initial[k] = r[k] || '' })
+    if (r.kind === 'static') {
+      // RU maydonlar: ustama toʻldirilgan boʻlsa oʻsha, aks holda asl (data.js) RU matni
+      const o = ovr[r.id], rs = STATIC_RU[r.id] || {}
+      initial.name_ru = (o && o.name_ru) || rs.name || ''
+      initial.addr_ru = (o && o.addr_ru) || rs.addr || ''
+      initial.near_ru = (o && o.near_ru) || rs.near || ''
+    }
     if (!initial.opening_date) initial.opening_date = ''
     setEditing({ mode: r.kind === 'static' ? 'static' : 'admin', id: r.id, initial, image: r.image })
   }
@@ -351,7 +364,7 @@ function BranchesPanel() {
         ))}
       </div>
 
-      {editing && <BranchForm state={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />}
+      {editing && <BranchForm state={editing} regionOpts={regionOpts} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />}
     </div>
   )
 }
@@ -359,9 +372,12 @@ function BranchesPanel() {
 function Tag({ text, c, bg }) {
   return <span style={{ fontSize: 11.5, fontWeight: 700, color: c, background: bg, padding: '2px 8px', borderRadius: 999 }}>{text}</span>
 }
+function GroupLabel({ text }) {
+  return <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 13, color: '#7a7a7a', margin: '18px 0 8px', letterSpacing: '.01em' }}>{text}</div>
+}
 
 // Filial qoʻshish / tahrirlash — modal oyna
-function BranchForm({ state, onClose, onSaved }) {
+function BranchForm({ state, onClose, onSaved, regionOpts = BASE_REGION_OPTS }) {
   const [f, setF] = useState(state.initial)
   const [file, setFile] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -375,7 +391,7 @@ function BranchForm({ state, onClose, onSaved }) {
     setBusy(true)
     try {
       const fd = new FormData()
-      FIELD_KEYS.forEach((k) => fd.append(k, f[k] || ''))
+      ALL_KEYS.forEach((k) => fd.append(k, f[k] || ''))
       if (file) fd.append('image', file)
       if (state.mode === 'new') await api.addBranch(fd)
       else if (isStatic) await api.saveOverride(state.id, fd)
@@ -392,17 +408,30 @@ function BranchForm({ state, onClose, onSaved }) {
           <h2 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 21, color: INK, margin: 0 }}>{title}</h2>
           <button type="button" onClick={onClose} style={{ border: 'none', background: '#f0f0f0', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Close size={18} /></button>
         </div>
-        {isStatic && <div style={{ fontSize: 12.5, color: MUTED, background: '#f6f6f6', borderRadius: 10, padding: '10px 12px', marginBottom: 14 }}>ℹ️ Bu asl (data.js) filial. Oʻzgarishlar UZ va RU tillarida bir xil koʻrinadi.</div>}
+        {isStatic && <div style={{ fontSize: 12.5, color: MUTED, background: '#f6f6f6', borderRadius: 10, padding: '10px 12px', marginBottom: 14 }}>ℹ️ Bu asl (data.js) filial. Oʻzbekcha va ruscha matnni alohida kiritishingiz mumkin.</div>}
         {err && <ErrorBox msg={err} />}
+
+        <GroupLabel text="🇺🇿 Oʻzbekcha matn" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
           <Field label="Filial nomi *"><input style={input} value={f.name} onChange={set('name')} placeholder="Masalan: Markaz filiali" /></Field>
-          <Field label="Telefon"><input style={input} value={f.phone} onChange={set('phone')} placeholder="+998 XX XXX XX XX" /></Field>
+          <Field label="Ish vaqti"><input style={input} value={f.hours} onChange={set('hours')} placeholder="08:00 – 24:00" /></Field>
           <Field label="Manzil"><input style={input} value={f.addr} onChange={set('addr')} placeholder="Andijon sh., ... koʻchasi" /></Field>
           <Field label="Moʻljal (yaqin joy)"><input style={input} value={f.near} onChange={set('near')} placeholder="Masalan: bozor yonida" /></Field>
-          <Field label="Ish vaqti"><input style={input} value={f.hours} onChange={set('hours')} placeholder="08:00 – 24:00" /></Field>
+        </div>
+
+        <GroupLabel text="🇷🇺 Ruscha matn (ixtiyoriy)" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
+          <Field label="Nomi (ruscha)"><input style={input} value={f.name_ru} onChange={set('name_ru')} placeholder="Например: Филиал «Центр»" /></Field>
+          <Field label="Manzil (ruscha)"><input style={input} value={f.addr_ru} onChange={set('addr_ru')} placeholder="г. Андижан, ул. ..." /></Field>
+          <Field label="Moʻljal (ruscha)"><input style={input} value={f.near_ru} onChange={set('near_ru')} placeholder="Например: рядом с рынком" /></Field>
+        </div>
+
+        <GroupLabel text="📍 Umumiy maʼlumot" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
+          <Field label="Telefon"><input style={input} value={f.phone} onChange={set('phone')} placeholder="+998 XX XXX XX XX" /></Field>
           <Field label="Hudud">
             <select style={input} value={f.region} onChange={set('region')}>
-              {REGIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              {regionOpts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </select>
           </Field>
           <Field label="Kenglik (lat)"><input style={input} value={f.lat} onChange={set('lat')} placeholder="40.783430" /></Field>
@@ -426,6 +455,64 @@ function BranchForm({ state, onClose, onSaved }) {
           <button type="button" onClick={onClose} style={{ ...btn, background: '#f0f0f0', color: INK }}>Bekor qilish</button>
         </div>
       </form>
+    </div>
+  )
+}
+
+/* ---------- HUDUDLAR ---------- */
+function RegionsPanel() {
+  const [items, setItems] = useState([])
+  const [name, setName] = useState('')
+  const [nameRu, setNameRu] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  useAuthGuard(err)
+
+  const load = () => api.getRegions().then(setItems).catch((e) => setErr(e.message))
+  useEffect(() => { load() }, [])
+
+  const add = async (e) => {
+    e.preventDefault(); setErr('')
+    if (!name.trim()) { setErr('Hudud nomini kiriting'); return }
+    setBusy(true)
+    try { await api.addRegion(name.trim(), nameRu.trim()); setName(''); setNameRu(''); load() }
+    catch (e) { setErr(e.message) } finally { setBusy(false) }
+  }
+  const del = async (key) => { if (!confirmDel()) return; try { await api.delRegion(key); load() } catch (e) { setErr(e.message) } }
+
+  return (
+    <div>
+      <PanelHead title="Hududlar" sub="Filial filtridagi tugmalar (chiplar). Yangi hudud qoʻshsangiz, filial qoʻshishda tanlash mumkin boʻladi" />
+      {err && <ErrorBox msg={err} />}
+      <form onSubmit={add} style={{ ...card, marginBottom: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
+          <Field label="Hudud nomi (oʻzbekcha) *"><input style={input} value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan: Marhamat tumani" /></Field>
+          <Field label="Nomi (ruscha)"><input style={input} value={nameRu} onChange={(e) => setNameRu(e.target.value)} placeholder="Например: Мархаматский район" /></Field>
+        </div>
+        <button style={{ ...btnPrimary, marginTop: 14, opacity: busy ? .7 : 1 }} disabled={busy}><Plus size={18} /> {busy ? 'Qoʻshilmoqda…' : 'Hudud qoʻshish'}</button>
+      </form>
+
+      <div style={{ ...card, padding: 14, marginBottom: 12 }}>
+        <div style={{ fontSize: 12.5, fontWeight: 700, color: MUTED, marginBottom: 10 }}>ASOSIY HUDUDLAR (oʻzgarmas)</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {BASE_REGIONS.map((r) => (
+            <span key={r.key} style={{ fontSize: 13.5, fontWeight: 600, color: BODY, background: '#f2f2f2', padding: '7px 13px', borderRadius: 999 }}>{r.name}</span>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {items.map((r) => (
+          <div key={r.key} style={{ ...card, padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15, color: INK }}>{r.name}</div>
+              <div style={{ fontSize: 12.5, color: MUTED, marginTop: 2 }}>{r.name_ru ? 'RU: ' + r.name_ru : 'ruscha nomi yoʻq'} · <span style={{ color: '#b0b0b0' }}>{r.key}</span></div>
+            </div>
+            <button onClick={() => del(r.key)} title="Oʻchirish" style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid #ecd5d1', background: '#fbf1ef', color: '#a4483c', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}><Trash size={16} /></button>
+          </div>
+        ))}
+        {items.length === 0 && <Empty text="Hozircha admin orqali qoʻshilgan hudud yoʻq" />}
+      </div>
     </div>
   )
 }

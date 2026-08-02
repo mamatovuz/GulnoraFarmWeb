@@ -135,8 +135,33 @@ app.delete('/api/news/:id', auth, (req, res) => {
   res.json({ ok: true })
 })
 
+/* ---------- Hududlar (filial filtri) ---------- */
+function slugify(s) {
+  let x = String(s).toLowerCase().trim()
+  x = x.replace(/oʻ/g, 'o').replace(/gʻ/g, 'g').replace(/[ʻʼ'']/g, '')
+  x = x.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return x || 'hudud-' + Date.now()
+}
+app.get('/api/regions', (req, res) => {
+  const rows = db.prepare('SELECT key, name, name_ru FROM regions ORDER BY sort ASC, name ASC').all()
+  res.json(rows)
+})
+app.post('/api/regions', auth, (req, res) => {
+  const name = (req.body.name || '').trim()
+  const name_ru = (req.body.name_ru || '').trim()
+  if (!name) return res.status(400).json({ error: 'Hudud nomini kiriting' })
+  let key = slugify(name), base = key, i = 2
+  while (db.prepare('SELECT 1 FROM regions WHERE key = ?').get(key)) key = base + '-' + i++
+  db.prepare('INSERT INTO regions (key, name, name_ru) VALUES (?, ?, ?)').run(key, name, name_ru)
+  res.json({ key, name, name_ru })
+})
+app.delete('/api/regions/:key', auth, (req, res) => {
+  db.prepare('DELETE FROM regions WHERE key = ?').run(req.params.key)
+  res.json({ ok: true })
+})
+
 /* ---------- Filiallar (admin qoʻshadigan) ---------- */
-const BRANCH_FIELDS = ['name', 'addr', 'near', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
+const BRANCH_FIELDS = ['name', 'addr', 'near', 'name_ru', 'addr_ru', 'near_ru', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
 app.get('/api/branches', (req, res) => {
   const rows = db.prepare('SELECT * FROM branches ORDER BY id ASC').all()
   res.json(rows.map((r) => ({ ...r, id: 'db' + r.id, image: imgUrl(r.image) })))
@@ -150,8 +175,8 @@ app.post('/api/branches', auth, upload.single('image'), (req, res) => {
   const file = req.file ? req.file.filename : ''
   const info = db
     .prepare(
-      `INSERT INTO branches (name, addr, near, hours, phone, lat, lon, region, status, opening_date, image)
-       VALUES (@name,@addr,@near,@hours,@phone,@lat,@lon,@region,@status,@opening_date,@image)`,
+      `INSERT INTO branches (name, addr, near, name_ru, addr_ru, near_ru, hours, phone, lat, lon, region, status, opening_date, image)
+       VALUES (@name,@addr,@near,@name_ru,@addr_ru,@near_ru,@hours,@phone,@lat,@lon,@region,@status,@opening_date,@image)`,
     )
     .run({ ...b, hours: b.hours || '08:00 – 24:00', region: b.region || 'andijon', image: file })
   res.json({ id: 'db' + info.lastInsertRowid })
@@ -171,8 +196,8 @@ app.put('/api/branches/:id', auth, upload.single('image'), (req, res) => {
     image = req.file.filename
   }
   db.prepare(
-    `UPDATE branches SET name=@name, addr=@addr, near=@near, hours=@hours, phone=@phone,
-      lat=@lat, lon=@lon, region=@region, status=@status, opening_date=@opening_date, image=@image WHERE id=@id`,
+    `UPDATE branches SET name=@name, addr=@addr, near=@near, name_ru=@name_ru, addr_ru=@addr_ru, near_ru=@near_ru,
+      hours=@hours, phone=@phone, lat=@lat, lon=@lon, region=@region, status=@status, opening_date=@opening_date, image=@image WHERE id=@id`,
   ).run({ ...b, hours: b.hours || '08:00 – 24:00', region: b.region || 'andijon', image, id })
   res.json({ ok: true })
 })
@@ -203,10 +228,11 @@ app.put('/api/branch-overrides/:id', auth, upload.single('image'), (req, res) =>
   }
   db.prepare(
     `INSERT INTO branch_overrides
-       (branch_id, name, addr, near, hours, phone, lat, lon, region, status, opening_date, image, hidden, updated_at)
-     VALUES (@branch_id,@name,@addr,@near,@hours,@phone,@lat,@lon,@region,@status,@opening_date,@image,0,strftime('%s','now'))
+       (branch_id, name, addr, near, name_ru, addr_ru, near_ru, hours, phone, lat, lon, region, status, opening_date, image, hidden, updated_at)
+     VALUES (@branch_id,@name,@addr,@near,@name_ru,@addr_ru,@near_ru,@hours,@phone,@lat,@lon,@region,@status,@opening_date,@image,0,strftime('%s','now'))
      ON CONFLICT(branch_id) DO UPDATE SET
-       name=@name, addr=@addr, near=@near, hours=@hours, phone=@phone, lat=@lat, lon=@lon,
+       name=@name, addr=@addr, near=@near, name_ru=@name_ru, addr_ru=@addr_ru, near_ru=@near_ru,
+       hours=@hours, phone=@phone, lat=@lat, lon=@lon,
        region=@region, status=@status, opening_date=@opening_date, image=@image, hidden=0, updated_at=strftime('%s','now')`,
   ).run({ ...b, branch_id: branchId, image })
   res.json({ ok: true })

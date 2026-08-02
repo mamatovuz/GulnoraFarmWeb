@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { TR, withBranchUrls, applyBranchData, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, daysUntilOpening, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
+import { TR, withBranchUrls, applyBranchData, buildRegionLabels, sendLeadToTelegram, distanceKm, formatDistance, branchOpenStatus, daysUntilOpening, PHONE, PHONE_DISPLAY, TELEGRAM, VACANCY_BOT, INSTAGRAM, HERO_IMAGE, ABOUT_IMAGE } from './data.js'
 import Logo from './components/Logo.jsx'
 import ImageSlot from './components/ImageSlot.jsx'
 import BranchMap from './components/BranchMap.jsx'
@@ -63,18 +63,25 @@ export default function App() {
   const [ready, setReady] = useState(false)
   const [adminBranches, setAdminBranches] = useState([])
   const [overrides, setOverrides] = useState([])
+  const [adminRegions, setAdminRegions] = useState([])
 
   const t = TR[lang]
   // Statik filiallar + admin oʻzgarishlari (tahrir/oʻchirish) + admin qoʻshganlari
-  const branches = withBranchUrls(applyBranchData(t.branches, overrides, adminBranches))
+  const branches = withBranchUrls(applyBranchData(t.branches, overrides, adminBranches, lang))
+  // Hudud nomlari (asosiy + admin qoʻshgan), til boʻyicha
+  const regionLabels = useMemo(
+    () => buildRegionLabels(adminRegions, lang, t.regions.all),
+    [adminRegions, lang, t.regions.all],
+  )
 
   // Scroll-reveal — faqat mount boʻlgandan keyin yoqiladi
   useEffect(() => {
     setReady(true)
     trackVisit() // tashrifni statistikaga yozish
-    // Admin qoʻshgan filiallar va statik filiallar ustamasini yuklaymiz
+    // Admin qoʻshgan filiallar, ustama va hududlarni yuklaymiz
     api.getBranches().then(setAdminBranches).catch(() => {})
     api.getOverrides().then(setOverrides).catch(() => {})
+    api.getRegions().then(setAdminRegions).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -122,7 +129,7 @@ export default function App() {
       <Trust t={t} />
       <About t={t} />
       <Services t={t} />
-      <Branches t={t} branches={branches} />
+      <Branches t={t} branches={branches} regionLabels={regionLabels} />
       <Testimonials t={t} />
       <Partners t={t} />
       <Vacancy t={t} />
@@ -350,7 +357,7 @@ function Services({ t }) {
 }
 
 /* ---------- BRANCHES ---------- */
-function Branches({ t, branches }) {
+function Branches({ t, branches, regionLabels = {} }) {
   const [query, setQuery] = useState('')
   const [region, setRegion] = useState('all')
   const [userLoc, setUserLoc] = useState(null)
@@ -450,7 +457,7 @@ function Branches({ t, branches }) {
             return (
               <button key={rk} onClick={() => setRegion(rk)} className={'gf-chip' + (active ? ' gf-chip-on' : '')}
                 style={{ ...btnBase, border: '1px solid ' + (active ? '#4f4f4f' : '#d6d6d6'), background: active ? 'linear-gradient(180deg,#5a5a5a 0%,#454545 100%)' : '#fff', color: active ? '#fff' : BODY, boxShadow: active ? 'inset 0 1px 0 rgba(255,255,255,.13), 0 6px 14px -8px rgba(38,38,38,.5)' : 'none', fontSize: 13.5, padding: '8px 16px' }}>
-                {t.regions[rk] || rk}
+                {regionLabels[rk] || t.regions[rk] || rk}
               </button>
             )
           })}

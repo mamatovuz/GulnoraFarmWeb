@@ -36,6 +36,11 @@ export const api = {
   editBranch: (id, form) => req('/api/branches/' + id, { method: 'PUT', auth: true, isForm: true, body: form }),
   delBranch: (id) => req('/api/branches/' + id, { method: 'DELETE', auth: true }),
 
+  // Hududlar (filial filtri chiplari)
+  getRegions: () => req('/api/regions'),
+  addRegion: (name, name_ru) => req('/api/regions', { method: 'POST', auth: true, body: { name, name_ru } }),
+  delRegion: (key) => req('/api/regions/' + key, { method: 'DELETE', auth: true }),
+
   // Statik (data.js) filiallar ustamasi — tahrirlash / yashirish / tiklash
   getOverrides: () => req('/api/branch-overrides'),
   saveOverride: (branchId, form) => req('/api/branch-overrides/' + branchId, { method: 'PUT', auth: true, isForm: true, body: form }),

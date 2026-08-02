@@ -37,6 +37,9 @@ db.exec(`
     name         TEXT NOT NULL,
     addr         TEXT DEFAULT '',
     near         TEXT DEFAULT '',
+    name_ru      TEXT DEFAULT '',
+    addr_ru      TEXT DEFAULT '',
+    near_ru      TEXT DEFAULT '',
     hours        TEXT DEFAULT '08:00 – 24:00',
     phone        TEXT DEFAULT '',
     lat          TEXT DEFAULT '',
@@ -55,13 +58,25 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits(ts);
 
-  -- data.js dagi statik filiallarni tahrirlash/oʻchirish uchun ustama (override).
+  -- Admin qoʻshadigan hududlar (filial filtri chiplari)
+  CREATE TABLE IF NOT EXISTS regions (
+    key        TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    name_ru    TEXT DEFAULT '',
+    sort       INTEGER DEFAULT 0,
+    created_at INTEGER DEFAULT (strftime('%s','now'))
+  );
+
+  -- data.js dagi statik filiallarni tahrirlash/o'chirish uchun ustama (override).
   -- branch_id — statik filial IDsi (br1, br2, ...). hidden=1 boʻlsa filial yashiriladi.
   CREATE TABLE IF NOT EXISTS branch_overrides (
     branch_id    TEXT PRIMARY KEY,
     name         TEXT,
     addr         TEXT,
     near         TEXT,
+    name_ru      TEXT DEFAULT '',
+    addr_ru      TEXT DEFAULT '',
+    near_ru      TEXT DEFAULT '',
     hours        TEXT,
     phone        TEXT,
     lat          TEXT,
@@ -74,5 +89,16 @@ db.exec(`
     updated_at   INTEGER DEFAULT (strftime('%s','now'))
   );
 `)
+
+// Migratsiya — eski bazalarga yetishmayotgan ustunlarni qoʻshadi
+function ensureColumn(table, col, def = "TEXT DEFAULT ''") {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all()
+  if (!cols.some((c) => c.name === col)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${col} ${def}`)
+}
+for (const table of ['branches', 'branch_overrides']) {
+  ensureColumn(table, 'name_ru')
+  ensureColumn(table, 'addr_ru')
+  ensureColumn(table, 'near_ru')
+}
 
 export default db
