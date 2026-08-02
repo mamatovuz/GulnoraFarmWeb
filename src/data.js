@@ -171,7 +171,7 @@ export const TR = {
     newsTitle: 'Yangiliklar', newsEmpty: 'Hozircha yangiliklar yoʻq', newsClose: 'Yopish',
 
     // Filial qidiruv / xarita
-    regions: { all: 'Barchasi', andijon: 'Andijon shahri', asaka: 'Asaka', qurgontepa: 'Qoʻrgʻontepa', xojaobod: 'Xoʻjaobod', paytug: 'Paytugʻ' },
+    regions: { all: 'Barchasi', andijon: 'Andijon shahri', asaka: 'Asaka', qurgontepa: 'Qoʻrgʻontepa', xojaobod: 'Xoʻjaobod', paytug: 'Paytugʻ',chinabod: 'Chinabod' },
     searchPlaceholder: 'Filial yoki manzil boʻyicha qidiring…',
     nearMe: 'Menga eng yaqin',
     nearMeLoading: 'Aniqlanmoqda…',
