@@ -170,11 +170,11 @@ app.delete('/api/regions/:key', auth, (req, res) => {
 })
 
 /* ---------- Mijozlar sharhlari ---------- */
-const MAX_FEATURED = 4
-// Bosh sahifada koʻrinadigan (tasdiqlangan + featured) sharhlar
+// Bosh sahifada koʻrinadigan (tasdiqlangan + featured) sharhlar — cheksiz koʻp
+// boʻlishi mumkin, ular sahifada uzluksiz aylanib turadi.
 app.get('/api/reviews/featured', (req, res) => {
   const rows = db
-    .prepare(`SELECT * FROM reviews WHERE status='approved' AND featured=1 ORDER BY sort ASC, id ASC LIMIT ${MAX_FEATURED}`)
+    .prepare(`SELECT * FROM reviews WHERE status='approved' AND featured=1 ORDER BY sort ASC, id ASC`)
     .all()
   res.json(rows)
 })
@@ -203,12 +203,8 @@ app.put('/api/reviews/:id', auth, (req, res) => {
   let featured = row.featured
   if (req.body.status && ['pending', 'approved', 'rejected'].includes(req.body.status)) status = req.body.status
   if (req.body.featured != null) featured = req.body.featured ? 1 : 0
-  // featured faqat tasdiqlangan sharhda va koʻpi 4 ta boʻlishi mumkin
+  // featured faqat tasdiqlangan sharhda boʻlishi mumkin (soni cheklanmagan)
   if (featured && status !== 'approved') status = 'approved'
-  if (featured && !row.featured) {
-    const n = db.prepare("SELECT COUNT(*) n FROM reviews WHERE featured=1 AND status='approved'").get().n
-    if (n >= MAX_FEATURED) return res.status(400).json({ error: `Koʻpi bilan ${MAX_FEATURED} ta sharhni tanlash mumkin. Avval boshqasini olib tashlang.` })
-  }
   db.prepare('UPDATE reviews SET status = ?, featured = ? WHERE id = ?').run(status, featured, req.params.id)
   res.json({ ok: true })
 })

@@ -462,7 +462,6 @@ function BranchForm({ state, onClose, onSaved, regionOpts = BASE_REGION_OPTS }) 
 }
 
 /* ---------- SHARXLAR (mijozlar fikri) ---------- */
-const MAX_FEATURED = 4
 function AdminStars({ n }) {
   return (
     <div style={{ display: 'flex', gap: 1 }}>
@@ -509,7 +508,7 @@ function ReviewsPanel() {
 
   return (
     <div>
-      <PanelHead title="Sharxlar" sub={`Yangi sharhlar shu yerda tasdiqlanadi. Saytda koʻpi bilan ${MAX_FEATURED} ta sharh koʻrsatiladi.`} />
+      <PanelHead title="Sharxlar" sub="Yangi sharhlar shu yerda tasdiqlanadi. Saytda istagancha sharh koʻrsatishingiz mumkin — ular bosh sahifada uzluksiz aylanib turadi." />
       {err && <ErrorBox msg={err} />}
 
       {/* Moderatsiya — yangi sharhlar */}
@@ -526,20 +525,18 @@ function ReviewsPanel() {
       </div>
 
       {/* Tasdiqlangan — saytda koʻrsatishni tanlash (galichka) */}
-      <GroupLabel text={`⭐ Tasdiqlangan sharhlar — saytda: ${featuredCount} / ${MAX_FEATURED}`} />
+      <GroupLabel text={`⭐ Tasdiqlangan sharhlar — saytda: ${featuredCount}`} />
       <div style={{ fontSize: 12.5, color: MUTED, marginBottom: 10 }}>
-        Belgilangan (galichkali) sharhlar bosh sahifadagi «Mijozlar fikri» boʻlimida koʻrinadi. Birini olib, oʻrniga boshqasini belgilashingiz mumkin.
+        Belgilangan (galichkali) sharhlar bosh sahifadagi «Mijozlar fikri» boʻlimida koʻrinadi. Istagancha sharhni belgilashingiz mumkin — ular sahifada uzluksiz aylanib turadi.
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {approved.map((r) => {
-          const disabledFeature = !r.featured && featuredCount >= MAX_FEATURED
           return (
             <ReviewCard key={r.id} r={r}>
               <button
                 onClick={() => act(r.id, { featured: r.featured ? 0 : 1 })}
-                disabled={busy === r.id || disabledFeature}
-                title={disabledFeature ? `Avval boshqa sharhni oling (${MAX_FEATURED} tadan koʻp boʻlmaydi)` : ''}
-                style={{ ...btn, padding: '8px 14px', background: r.featured ? 'linear-gradient(180deg,#5a5a5a,#3f3f3f)' : '#f0f0f0', color: r.featured ? '#fff' : (disabledFeature ? '#b5b5b5' : INK), cursor: disabledFeature ? 'not-allowed' : 'pointer' }}>
+                disabled={busy === r.id}
+                style={{ ...btn, padding: '8px 14px', background: r.featured ? 'linear-gradient(180deg,#5a5a5a,#3f3f3f)' : '#f0f0f0', color: r.featured ? '#fff' : INK, cursor: 'pointer' }}>
                 {r.featured ? <><Check size={16} color="#fff" /> Saytda</> : 'Saytga qoʻyish'}
               </button>
               <button onClick={() => del(r.id)} title="Oʻchirish" style={delIconBtn}><Trash size={15} /></button>
