@@ -136,7 +136,7 @@ export default function App() {
       <Branches t={t} branches={branches} regionLabels={regionLabels} />
       <Testimonials t={t} lang={lang} />
       <Partners t={t} />
-      <Vacancy t={t} />
+      <Vacancy t={t} lang={lang} />
       <Contact t={t} lang={lang} />
       <Footer t={t} />
       <FloatingUI />
@@ -578,11 +578,35 @@ function BranchCard({ b, t, active, onFocus }) {
 }
 
 /* ---------- VACANCY ---------- */
-function Vacancy({ t }) {
+function Vacancy({ t, lang }) {
+  const [items, setItems] = useState([])
+  const [rotateSeconds, setRotateSeconds] = useState(600)
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    api.getVacancies()
+      .then((d) => { setItems(d.items || []); setRotateSeconds(d.rotateSeconds ?? 600) })
+      .catch(() => {})
+  }, [])
+
+  // Bir nechta vakansiya boʻlsa — belgilangan oraliqda navbatma-navbat aylantiramiz
+  useEffect(() => {
+    if (items.length <= 1 || !rotateSeconds) return
+    const ms = Math.max(3, rotateSeconds) * 1000
+    const timer = setInterval(() => setIdx((i) => (i + 1) % items.length), ms)
+    return () => clearInterval(timer)
+  }, [items.length, rotateSeconds])
+
+  // Roʻyxat qisqarsa indeks chegaradan chiqmasin
+  useEffect(() => { if (idx >= items.length && items.length) setIdx(0) }, [items.length, idx])
+
+  const current = items.length ? items[idx % items.length] : null
+  const hasVac = !!current
+
   return (
     <section id="vacancy" style={{ background: '#fff' }}>
       <div className="gf-pad" style={{ maxWidth: 1200, margin: '0 auto', padding: '84px 24px' }}>
-        <div className="gf-vac gf-reveal" style={{ background: 'linear-gradient(135deg,#5e5e5e 0%,#3a3a3a 45%,#242424 100%)', boxShadow: '0 40px 80px -44px rgba(38,38,38,.75)', borderRadius: R_PANEL, padding: '50px 56px', display: 'grid', gridTemplateColumns: '1.25fr .75fr', gap: 40, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div className="gf-vac gf-reveal" style={{ background: 'linear-gradient(135deg,#5e5e5e 0%,#3a3a3a 45%,#242424 100%)', boxShadow: '0 40px 80px -44px rgba(38,38,38,.75)', borderRadius: R_PANEL, padding: '50px 56px', display: 'grid', gridTemplateColumns: hasVac ? '1fr 1.02fr' : '1.25fr .75fr', gap: 40, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
           <div aria-hidden style={{ position: 'absolute', right: -60, top: -60, width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.11) 0%, rgba(255,255,255,0) 70%)' }} />
           <div aria-hidden style={{ position: 'absolute', left: -80, bottom: -90, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(118,118,118,.28) 0%, rgba(118,118,118,0) 70%)' }} />
           <div style={{ position: 'relative' }}>
@@ -605,14 +629,98 @@ function Vacancy({ t }) {
               <Telegram size={15} />@Gulnorafarmvacancy_bot
             </div>
           </div>
-          <div className="gf-vacicon" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,.12)' }}>
-              <Users size={76} color="#fff" sw={1.4} />
+          {hasVac ? (
+            <div className="gf-vaccard" style={{ position: 'relative' }}>
+              <VacancyCard v={current} t={t} lang={lang} count={items.length} idx={idx % items.length} onDot={setIdx} />
             </div>
-          </div>
+          ) : (
+            <div className="gf-vacicon" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 150, height: 150, borderRadius: '50%', background: 'rgba(255,255,255,.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,.12)' }}>
+                <Users size={76} color="#fff" sw={1.4} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
+  )
+}
+
+// Bitta vakansiya kartochkasi — foydalanuvchi bergan Telegram formatiga mos,
+// lekin toza, dizaynли koʻrinishda. Pastida «Ariza yuborish» tugmasi bot ochadi.
+function VacancyCard({ v, t, lang, count, idx, onDot }) {
+  const genderMap = {
+    male: '👨 ' + t.vacGenderMale,
+    female: '👩 ' + t.vacGenderFemale,
+    any: '👥 ' + t.vacGenderAny,
+  }
+  const shiftEmoji = { day: '☀️', night: '🌙', any: '🕒' }[v.shift_type] || '🕒'
+  const shiftTypeLabel = { day: t.vacShiftDay, night: t.vacShiftNight, any: t.vacShiftAny }[v.shift_type] || t.vacShiftAny
+  const shiftName = (v.shift || '').trim() || (v.shift_type !== 'any' ? shiftTypeLabel : '')
+  const shiftVal = shiftName
+    ? `${shiftEmoji} ${shiftName}${v.work_time ? ` (${v.work_time})` : ''}`
+    : (v.work_time ? `${shiftEmoji} ${v.work_time}` : '')
+  const countVal = /^\d+$/.test((v.count || '').trim()) ? `${v.count} ${t.vacCountUnit}` : v.count
+
+  const rows = [
+    ['💼', t.vacFPosition, v.position],
+    ['🏢', t.vacFBranch, v.branch],
+    ['👥', t.vacFCount, countVal],
+    ['🚻', t.vacFGender, genderMap[v.gender] || genderMap.any],
+    ['🕒', t.vacFShift, shiftVal],
+    ['⏰', t.vacFTime, v.work_time],
+    ['📈', t.vacFExp, v.experience],
+    ['💰', t.vacFSalary, v.salary],
+  ].filter(([, , val]) => val && String(val).trim())
+
+  return (
+    <div key={v.id} style={{ background: '#fff', borderRadius: R_CARD, padding: '24px 24px 22px', boxShadow: '0 30px 60px -30px rgba(0,0,0,.6)', animation: 'gfFade .5s ease both' }}>
+      {/* Sarlavha — 🆕 YANGI VAKANSIYA */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'linear-gradient(180deg,#5a5a5a,#3f3f3f)', color: '#fff', fontFamily: DISPLAY, fontWeight: 700, fontSize: 12.5, letterSpacing: '.06em', textTransform: 'uppercase', padding: '6px 12px', borderRadius: 999 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#7ee0a5', boxShadow: '0 0 0 3px rgba(126,224,165,.25)', display: 'inline-block' }} />
+          🆕 {t.vacCardNew}
+        </span>
+      </div>
+      <div style={{ height: 1, background: 'linear-gradient(90deg,#e4e4e4,transparent)', margin: '16px 0 14px' }} />
+
+      {/* Maydonlar */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+        {rows.map(([emoji, label, val], i) => (
+          <div key={i} style={{ display: 'flex', gap: 11, alignItems: 'baseline' }}>
+            <span style={{ fontSize: 15, flex: 'none', width: 20, textAlign: 'center' }}>{emoji}</span>
+            <span style={{ fontSize: 13.5, color: MUTED, flex: 'none', minWidth: 96 }}>{label}:</span>
+            <span style={{ fontSize: 14.5, color: INK, fontWeight: 700, lineHeight: 1.35 }}>{val}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Talablar */}
+      {v.requirements && String(v.requirements).trim() ? (
+        <div style={{ marginTop: 16, background: '#f7f7f7', border: '1px solid ' + LINE, borderRadius: 14, padding: '13px 15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: DISPLAY, fontWeight: 700, fontSize: 13.5, color: INK }}>📋 {t.vacFReq}</div>
+          <div style={{ fontSize: 13.5, color: BODY, marginTop: 6, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{v.requirements}</div>
+        </div>
+      ) : null}
+
+      {/* Ariza yuborish */}
+      <a href={VACANCY_BOT} target="_blank" rel="noopener" className="gf-btn-primary" style={{ ...btnPrimary, display: 'flex', width: '100%', marginTop: 18, fontSize: 15.5, padding: '14px 20px', gap: 9 }}>
+        <Telegram size={19} />{t.vacApply}
+      </a>
+      <div style={{ fontSize: 12, color: MUTED, marginTop: 9, textAlign: 'center', lineHeight: 1.4 }}>
+        📩 {t.vacOpenBot}
+      </div>
+
+      {/* Bir nechta vakansiya boʻlsa — nuqtalar */}
+      {count > 1 && (
+        <div style={{ display: 'flex', gap: 7, justifyContent: 'center', marginTop: 14 }}>
+          {Array.from({ length: count }).map((_, i) => (
+            <button key={i} onClick={() => onDot(i)} aria-label={`Vakansiya ${i + 1}`}
+              style={{ width: i === idx ? 22 : 8, height: 8, borderRadius: 999, border: 'none', cursor: 'pointer', padding: 0, background: i === idx ? 'linear-gradient(90deg,#5a5a5a,#3f3f3f)' : '#d6d6d6', transition: 'width .25s, background .25s' }} />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 

@@ -213,6 +213,71 @@ app.delete('/api/reviews/:id', auth, (req, res) => {
   res.json({ ok: true })
 })
 
+/* ---------- Vakansiyalar ---------- */
+const VAC_FIELDS = ['position', 'branch', 'count', 'gender', 'shift_type', 'shift', 'work_time', 'experience', 'salary', 'requirements']
+const GENDERS = ['male', 'female', 'any']
+const SHIFT_TYPES = ['day', 'night', 'any']
+// Aylanish oraligʻi (sekund). Standart — 10 daqiqa. 0 boʻlsa aylanmaydi.
+function getRotateSeconds() {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'vacancy_rotate_seconds'").get()
+  const n = row ? parseInt(row.value, 10) : NaN
+  return Number.isFinite(n) && n >= 0 ? n : 600
+}
+function normalizeVacancy(body) {
+  const v = {}
+  for (const f of VAC_FIELDS) v[f] = String((body && body[f]) || '').trim()
+  if (!GENDERS.includes(v.gender)) v.gender = 'any'
+  if (!SHIFT_TYPES.includes(v.shift_type)) v.shift_type = 'any'
+  v.count = v.count || '1'
+  return v
+}
+// Public — faol vakansiyalar + aylanish oraligʻi
+app.get('/api/vacancies', (req, res) => {
+  const rows = db.prepare('SELECT * FROM vacancies WHERE active = 1 ORDER BY sort ASC, id DESC').all()
+  res.json({ items: rows, rotateSeconds: getRotateSeconds() })
+})
+// Admin — barcha vakansiyalar (faol/nofaol)
+app.get('/api/vacancies/all', auth, (req, res) => {
+  const rows = db.prepare('SELECT * FROM vacancies ORDER BY sort ASC, id DESC').all()
+  res.json({ items: rows, rotateSeconds: getRotateSeconds() })
+})
+app.post('/api/vacancies', auth, (req, res) => {
+  const v = normalizeVacancy(req.body)
+  if (!v.position) return res.status(400).json({ error: 'Lavozimni kiriting' })
+  const info = db.prepare(
+    `INSERT INTO vacancies (position, branch, count, gender, shift_type, shift, work_time, experience, salary, requirements)
+     VALUES (@position,@branch,@count,@gender,@shift_type,@shift,@work_time,@experience,@salary,@requirements)`,
+  ).run(v)
+  res.json({ id: info.lastInsertRowid })
+})
+app.put('/api/vacancies/:id', auth, (req, res) => {
+  const row = db.prepare('SELECT * FROM vacancies WHERE id = ?').get(req.params.id)
+  if (!row) return res.status(404).json({ error: 'Vakansiya topilmadi' })
+  const v = normalizeVacancy(req.body)
+  if (!v.position) return res.status(400).json({ error: 'Lavozimni kiriting' })
+  const active = req.body.active != null ? (req.body.active ? 1 : 0) : row.active
+  db.prepare(
+    `UPDATE vacancies SET position=@position, branch=@branch, count=@count, gender=@gender,
+      shift_type=@shift_type, shift=@shift, work_time=@work_time, experience=@experience,
+      salary=@salary, requirements=@requirements, active=@active WHERE id=@id`,
+  ).run({ ...v, active, id: req.params.id })
+  res.json({ ok: true })
+})
+app.delete('/api/vacancies/:id', auth, (req, res) => {
+  db.prepare('DELETE FROM vacancies WHERE id = ?').run(req.params.id)
+  res.json({ ok: true })
+})
+// Aylanish oraligʻini saqlash
+app.put('/api/vacancy-settings', auth, (req, res) => {
+  let n = parseInt(req.body && req.body.rotateSeconds, 10)
+  if (!Number.isFinite(n) || n < 0) n = 600
+  db.prepare(
+    `INSERT INTO settings (key, value) VALUES ('vacancy_rotate_seconds', ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+  ).run(String(n))
+  res.json({ ok: true, rotateSeconds: n })
+})
+
 /* ---------- Filiallar (admin qoʻshadigan) ---------- */
 const BRANCH_FIELDS = ['name', 'addr', 'near', 'name_ru', 'addr_ru', 'near_ru', 'hours', 'phone', 'lat', 'lon', 'region', 'status', 'opening_date']
 app.get('/api/branches', (req, res) => {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { api, getToken, setToken, clearToken } from '../api.js'
 import { TR, BASE_REGIONS } from '../data.js'
 import Logo from '../components/Logo.jsx'
-import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close, Star, Chat, Check } from '../components/icons.jsx'
+import { Chart, Handshake, Bell, Pin, Plus, Trash, Logout, Close, Star, Chat, Check, Users } from '../components/icons.jsx'
 
 const INK = '#262626', BODY = '#565656', MUTED = '#6b6b6b', LINE = '#e4e4e4'
 const DISPLAY = "'Quicksand', sans-serif"
@@ -69,6 +69,7 @@ const TABS = [
   { key: 'reviews', label: 'Sharxlar', icon: Chat },
   { key: 'branches', label: 'Filiallar', icon: Pin },
   { key: 'regions', label: 'Hududlar', icon: Pin },
+  { key: 'vacancies', label: 'Vakansiya', icon: Users },
 ]
 
 function Dashboard({ onLogout }) {
@@ -103,6 +104,7 @@ function Dashboard({ onLogout }) {
           {tab === 'reviews' && <ReviewsPanel />}
           {tab === 'branches' && <BranchesPanel />}
           {tab === 'regions' && <RegionsPanel />}
+          {tab === 'vacancies' && <VacanciesPanel />}
         </main>
       </div>
     </div>
@@ -640,6 +642,180 @@ function RegionsPanel() {
         ))}
         {items.length === 0 && <Empty text="Hozircha admin orqali qoʻshilgan hudud yoʻq" />}
       </div>
+    </div>
+  )
+}
+
+/* ---------- VAKANSIYA ---------- */
+const emptyVacancy = { position: '', branch: '', count: '1', gender: 'any', shift_type: 'any', shift: '', work_time: '', experience: '', salary: '', requirements: '', active: 1 }
+const GENDER_OPTS = [['male', '👨 Erkak'], ['female', '👩 Ayol'], ['any', '👥 Farqi yoʻq']]
+const SHIFT_OPTS = [['day', '☀️ Kunduzgi'], ['night', '🌙 Kechki'], ['any', '🕒 Belgilanmagan']]
+const GENDER_LBL = Object.fromEntries(GENDER_OPTS)
+
+// Aylanish oraligʻini eng qulay birlikda koʻrsatish (sekund → {val, unit})
+function secToUnit(sec) {
+  if (sec > 0 && sec % 3600 === 0) return { val: sec / 3600, unit: 'h' }
+  if (sec > 0 && sec % 60 === 0) return { val: sec / 60, unit: 'm' }
+  return { val: sec, unit: 's' }
+}
+const UNIT_SEC = { s: 1, m: 60, h: 3600 }
+
+function VacanciesPanel() {
+  const [items, setItems] = useState([])
+  const [rotVal, setRotVal] = useState(10)
+  const [rotUnit, setRotUnit] = useState('m')
+  const [editing, setEditing] = useState(null) // { mode:'new'|'edit', id, initial }
+  const [savingRot, setSavingRot] = useState(false)
+  const [rotSaved, setRotSaved] = useState(false)
+  const [err, setErr] = useState('')
+  useAuthGuard(err)
+
+  const load = () => api.getAllVacancies().then((d) => {
+    setItems(d.items || [])
+    const u = secToUnit(d.rotateSeconds ?? 600)
+    setRotVal(u.val); setRotUnit(u.unit)
+  }).catch((e) => setErr(e.message))
+  useEffect(() => { load() }, [])
+
+  const saveRotation = async () => {
+    setErr(''); setSavingRot(true); setRotSaved(false)
+    try {
+      const sec = Math.max(0, Math.round(Number(rotVal) || 0)) * UNIT_SEC[rotUnit]
+      await api.setVacancySettings(sec)
+      setRotSaved(true); setTimeout(() => setRotSaved(false), 2500)
+    } catch (e) { setErr(e.message) } finally { setSavingRot(false) }
+  }
+  const toggleActive = async (v) => {
+    setErr('')
+    try { await api.editVacancy(v.id, { ...v, active: v.active ? 0 : 1 }); load() }
+    catch (e) { setErr(e.message) }
+  }
+  const del = async (id) => { if (!confirmDel()) return; try { await api.delVacancy(id); load() } catch (e) { setErr(e.message) } }
+
+  const activeCount = items.filter((v) => v.active).length
+
+  return (
+    <div>
+      <PanelHead title="Vakansiya" sub="Ish oʻrinlari saytdagi «Vakansiya» boʻlimida bittalab koʻrsatiladi. Bir nechta boʻlsa — belgilangan vaqtda navbatma-navbat aylanadi." />
+      {err && <ErrorBox msg={err} />}
+
+      {/* Aylanish oraligʻi */}
+      <div style={{ ...card, marginBottom: 16 }}>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 15.5, color: INK, marginBottom: 4 }}>🔄 Almashinish vaqti</div>
+        <div style={{ fontSize: 13, color: MUTED, marginBottom: 12 }}>Bir nechta vakansiya boʻlganda, saytda har bir vakansiya qancha vaqtdan keyin keyingisiga almashishini tanlang.</div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ width: 120 }}>
+            <label style={label}>Qiymat</label>
+            <input style={input} type="number" min="0" value={rotVal} onChange={(e) => setRotVal(e.target.value)} />
+          </div>
+          <div style={{ width: 150 }}>
+            <label style={label}>Birlik</label>
+            <select style={input} value={rotUnit} onChange={(e) => setRotUnit(e.target.value)}>
+              <option value="s">Sekund</option>
+              <option value="m">Daqiqa</option>
+              <option value="h">Soat</option>
+            </select>
+          </div>
+          <button onClick={saveRotation} disabled={savingRot} style={{ ...btnPrimary, opacity: savingRot ? .7 : 1 }}>
+            {savingRot ? 'Saqlanmoqda…' : 'Saqlash'}
+          </button>
+          {rotSaved && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#35604a', fontSize: 13.5, fontWeight: 600 }}><Check size={16} color="#35604a" /> Saqlandi</span>}
+        </div>
+      </div>
+
+      <button onClick={() => setEditing({ mode: 'new', id: null, initial: { ...emptyVacancy } })} style={{ ...btnPrimary, marginBottom: 16 }}>
+        <Plus size={18} /> Yangi vakansiya qoʻshish
+      </button>
+      <div style={{ fontSize: 13, color: MUTED, marginBottom: 14 }}>Saytda koʻrinadigan vakansiyalar: <b style={{ color: INK }}>{activeCount}</b></div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {items.map((v) => (
+          <div key={v.id} style={{ ...card, padding: 16, display: 'flex', gap: 14, alignItems: 'flex-start', opacity: v.active ? 1 : .55 }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 16, color: INK, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                💼 {v.position}
+                {!v.active && <Tag text="yashirilgan" c="#a4483c" bg="#fbf1ef" />}
+              </div>
+              <div style={{ fontSize: 13, color: MUTED, marginTop: 4, lineHeight: 1.5 }}>
+                {[v.branch, GENDER_LBL[v.gender], v.work_time, v.salary].filter(Boolean).join(' · ')}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flex: 'none' }}>
+              <button onClick={() => toggleActive(v)} title={v.active ? 'Yashirish' : 'Koʻrsatish'} style={{ ...btn, padding: '8px 12px', background: v.active ? '#f0f0f0' : '#edf2ee', color: v.active ? BODY : '#35604a', fontSize: 13 }}>
+                {v.active ? 'Yashirish' : 'Koʻrsatish'}
+              </button>
+              <button onClick={() => setEditing({ mode: 'edit', id: v.id, initial: { ...emptyVacancy, ...v } })} style={{ ...btn, padding: '8px 14px', background: '#f0f0f0', color: INK }}>Tahrirlash</button>
+              <button onClick={() => del(v.id)} title="Oʻchirish" style={delIconBtn}><Trash size={15} /></button>
+            </div>
+          </div>
+        ))}
+        {items.length === 0 && <Empty text="Hozircha vakansiya yoʻq. «Yangi vakansiya qoʻshish» tugmasini bosing." />}
+      </div>
+
+      {editing && <VacancyForm state={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />}
+    </div>
+  )
+}
+
+function VacancyForm({ state, onClose, onSaved }) {
+  const [f, setF] = useState(state.initial)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const set = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }))
+
+  const submit = async (e) => {
+    e.preventDefault(); setErr('')
+    if (!f.position.trim()) { setErr('Lavozimni kiriting'); return }
+    setBusy(true)
+    try {
+      if (state.mode === 'new') await api.addVacancy(f)
+      else await api.editVacancy(state.id, f)
+      onSaved()
+    } catch (e) { setErr(e.message) } finally { setBusy(false) }
+  }
+
+  const title = state.mode === 'new' ? 'Yangi vakansiya' : 'Vakansiyani tahrirlash'
+  return (
+    <div onMouseDown={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(20,20,22,.5)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '5vh 16px', zIndex: 100, overflowY: 'auto' }}>
+      <form onMouseDown={(e) => e.stopPropagation()} onSubmit={submit} style={{ ...card, width: 640, maxWidth: '100%', padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h2 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 21, color: INK, margin: 0 }}>{title}</h2>
+          <button type="button" onClick={onClose} style={{ border: 'none', background: '#f0f0f0', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Close size={18} /></button>
+        </div>
+        {err && <ErrorBox msg={err} />}
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="gf-form2">
+          <Field label="Lavozim *"><input style={input} value={f.position} onChange={set('position')} placeholder="Masalan: Farmatsevt" /></Field>
+          <Field label="Filial"><input style={input} value={f.branch} onChange={set('branch')} placeholder="Masalan: Boston filiali" /></Field>
+          <Field label="Kerakli xodim (soni)"><input style={input} value={f.count} onChange={set('count')} placeholder="1" /></Field>
+          <Field label="Kimlar uchun">
+            <select style={input} value={f.gender} onChange={set('gender')}>
+              {GENDER_OPTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </Field>
+          <Field label="Smena turi">
+            <select style={input} value={f.shift_type} onChange={set('shift_type')}>
+              {SHIFT_OPTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </Field>
+          <Field label="Smena nomi (ixtiyoriy)"><input style={input} value={f.shift} onChange={set('shift')} placeholder="Masalan: Kechki smena" /></Field>
+          <Field label="Ish vaqti"><input style={input} value={f.work_time} onChange={set('work_time')} placeholder="14:00 - 00:00" /></Field>
+          <Field label="Tajriba"><input style={input} value={f.experience} onChange={set('experience')} placeholder="Masalan: 1 yil" /></Field>
+          <Field label="Maosh"><input style={input} value={f.salary} onChange={set('salary')} placeholder="Masalan: Kelishiladi" /></Field>
+        </div>
+        <div style={{ marginTop: 14 }}>
+          <label style={label}>Talablar (ixtiyoriy)</label>
+          <textarea style={{ ...input, resize: 'vertical', minHeight: 90 }} value={f.requirements} onChange={set('requirements')} placeholder="Qoʻshimcha talablar…" />
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 14, cursor: 'pointer', fontSize: 14, color: BODY }}>
+          <input type="checkbox" checked={!!f.active} onChange={(e) => setF((o) => ({ ...o, active: e.target.checked ? 1 : 0 }))} style={{ width: 17, height: 17 }} />
+          Saytda koʻrsatilsin
+        </label>
+        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          <button type="submit" disabled={busy} style={{ ...btnPrimary, opacity: busy ? .7 : 1 }}>{busy ? 'Saqlanmoqda…' : 'Saqlash'}</button>
+          <button type="button" onClick={onClose} style={{ ...btn, background: '#f0f0f0', color: INK }}>Bekor qilish</button>
+        </div>
+      </form>
     </div>
   )
 }

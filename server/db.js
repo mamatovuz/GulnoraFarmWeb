@@ -84,6 +84,32 @@ db.exec(`
     created_at INTEGER DEFAULT (strftime('%s','now'))
   );
 
+  -- Vakansiyalar (ish oʻrinlari). Saytdagi «Vakansiya» boʻlimida bittalab,
+  -- belgilangan vaqtda navbatma-navbat aylanib koʻrsatiladi.
+  -- gender: male | female | any. shift_type: day | night | any (emoji uchun).
+  CREATE TABLE IF NOT EXISTS vacancies (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    position     TEXT NOT NULL,
+    branch       TEXT DEFAULT '',
+    count        TEXT DEFAULT '1',
+    gender       TEXT DEFAULT 'any',
+    shift_type   TEXT DEFAULT 'any',
+    shift        TEXT DEFAULT '',
+    work_time    TEXT DEFAULT '',
+    experience   TEXT DEFAULT '',
+    salary       TEXT DEFAULT '',
+    requirements TEXT DEFAULT '',
+    active       INTEGER DEFAULT 1,
+    sort         INTEGER DEFAULT 0,
+    created_at   INTEGER DEFAULT (strftime('%s','now'))
+  );
+
+  -- Umumiy sozlamalar (kalit-qiymat). Masalan, vakansiya aylanish oraligʻi.
+  CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT DEFAULT ''
+  );
+
   -- data.js dagi statik filiallarni tahrirlash/o'chirish uchun ustama (override).
   -- branch_id — statik filial IDsi (br1, br2, ...). hidden=1 boʻlsa filial yashiriladi.
   CREATE TABLE IF NOT EXISTS branch_overrides (

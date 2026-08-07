@@ -49,6 +49,14 @@ export const api = {
   updateReview: (id, data) => req('/api/reviews/' + id, { method: 'PUT', auth: true, body: data }),
   delReview: (id) => req('/api/reviews/' + id, { method: 'DELETE', auth: true }),
 
+  // Vakansiyalar
+  getVacancies: () => req('/api/vacancies'),
+  getAllVacancies: () => req('/api/vacancies/all', { auth: true }),
+  addVacancy: (data) => req('/api/vacancies', { method: 'POST', auth: true, body: data }),
+  editVacancy: (id, data) => req('/api/vacancies/' + id, { method: 'PUT', auth: true, body: data }),
+  delVacancy: (id) => req('/api/vacancies/' + id, { method: 'DELETE', auth: true }),
+  setVacancySettings: (rotateSeconds) => req('/api/vacancy-settings', { method: 'PUT', auth: true, body: { rotateSeconds } }),
+
   // Statik (data.js) filiallar ustamasi — tahrirlash / yashirish / tiklash
   getOverrides: () => req('/api/branch-overrides'),
   saveOverride: (branchId, form) => req('/api/branch-overrides/' + branchId, { method: 'PUT', auth: true, isForm: true, body: form }),
